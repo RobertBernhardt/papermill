@@ -7,7 +7,6 @@ import { initFAQ } from './components/faq/faq.js';
 import { initPricing } from './components/pricing/pricing.js';
 import { initModal } from './components/modal/modal.js';
 import { initTestimonials } from './components/testimonials/testimonials.js';
-import { initContactModal } from './components/contact/contact.js';
 import { fadeInElements } from './utils/animations.js';
 
 // Initialize the application when the DOM is loaded
