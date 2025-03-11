@@ -380,7 +380,7 @@
                 </div>
             </div>
             <div class="faq-cta">
-                <a href="#contact" class="cta-link">Still have questions? Contact us</a>
+                <a href="#contact" class="cta-link" data-modal="contact">Still have questions? Contact us</a>
             </div>
         </div>
     </section>
@@ -414,16 +414,16 @@
                         <li><a href="#">Home</a></li>
                         <li><a href="#examples">Examples</a></li>
                         <li><a href="#pricing">Pricing</a></li>
-                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="#contact" data-modal="contact">Contact</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
                     <h3>Legal</h3>
                     <ul class="footer-links">
-                        <li><a href="#terms">Terms of Service</a></li>
-                        <li><a href="#privacy">Privacy Policy</a></li>
-                        <li><a href="#imprint">Imprint</a></li>
-                        <li><a href="#integrity" class="ironic">Academic Integrity Statement</a></li>
+                        <li><a href="#terms" data-modal="terms">Terms of Service</a></li>
+                        <li><a href="#privacy" data-modal="privacy">Privacy Policy</a></li>
+                        <li><a href="#imprint" data-modal="imprint">Imprint</a></li>
+                        <li><a href="#integrity" class="ironic" data-modal="integrity">Academic Integrity Statement</a></li>
                     </ul>
                 </div>
             </div>
@@ -557,8 +557,112 @@
                     
                     <button type="submit" class="cta-button primary full-width">Generate My Paper</button>
                     
-                    <p class="form-disclaimer">By clicking "Generate My Paper," you agree to our <a href="#terms">Terms of Service</a> and acknowledge that your paper will be delivered within the timeframe specified for your selected options.</p>
+                    <p class="form-disclaimer">By clicking "Generate My Paper," you agree to our <a href="#terms" data-modal="terms">Terms of Service</a> and acknowledge that your paper will be delivered within the timeframe specified for your selected options.</p>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div class="modal-overlay" id="contactModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>Contact Us</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form class="contact-form">
+                    <div class="form-group">
+                        <label for="contact-name">Your Name</label>
+                        <input type="text" id="contact-name" placeholder="Enter your name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contact-email">Your Email</label>
+                        <input type="email" id="contact-email" placeholder="Enter your email address" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contact-subject">Subject</label>
+                        <select id="contact-subject" required>
+                            <option value="" disabled selected>Select a subject</option>
+                            <option value="question">General Question</option>
+                            <option value="support">Technical Support</option>
+                            <option value="feedback">Feedback</option>
+                            <option value="business">Business Inquiry</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contact-message">Your Message</label>
+                        <textarea id="contact-message" rows="5" placeholder="Type your message here..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="cta-button primary full-width">Send Message</button>
+                    
+                    <p class="form-disclaimer">We'll respond to your inquiry within 24-48 hours. Your information will be processed in accordance with our <a href="#privacy" data-modal="privacy">Privacy Policy</a>.</p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms of Service Modal -->
+    <div class="modal-overlay" id="termsModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>Terms of Service</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="legal-content">
+                    <p>Terms of Service content will go here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div class="modal-overlay" id="privacyModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>Privacy Policy</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="legal-content">
+                    <p>Privacy Policy content will go here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Imprint Modal -->
+    <div class="modal-overlay" id="imprintModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>Imprint</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="legal-content">
+                    <p>Imprint content will go here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Academic Integrity Modal -->
+    <div class="modal-overlay" id="academicIntegrityModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>Academic Integrity Statement</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="legal-content">
+                    <p>Academic Integrity Statement content will go here.</p>
+                </div>
             </div>
         </div>
     </div>

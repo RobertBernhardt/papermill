@@ -892,7 +892,6 @@ section:nth-child(even)::before {
 }
 
 .testimonial::before {
-    content: """;
     position: absolute;
     top: -20px;
     left: 20px;
@@ -1441,6 +1440,7 @@ section:nth-child(even)::before {
 }
 
 input[type="range"] {
+    appearance: none;
     -webkit-appearance: none;
     width: 100%;
     height: 8px;
@@ -1585,4 +1585,77 @@ input[type="range"]::-webkit-slider-thumb:hover {
     .paper-form {
         gap: 1.5rem;
     }
+}
+
+/* Additional styles for contact and legal modals */
+
+/* Legal Content Styles */
+.legal-content {
+    line-height: 1.7;
+    color: var(--text);
+}
+
+.legal-content h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary);
+    font-size: 1.3rem;
+}
+
+.legal-content p {
+    margin-bottom: 1rem;
+}
+
+.legal-content ul, .legal-content ol {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+}
+
+.legal-content li {
+    margin-bottom: 0.5rem;
+}
+
+/* Contact Form Specific Styles */
+.contact-form textarea {
+    width: 100%;
+    padding: 0.9rem 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 120px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #f9fafc;
+}
+
+.contact-form textarea:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(126, 87, 194, 0.15);
+    outline: none;
+    background-color: white;
+}
+
+/* Make sure the contact modal isn't too tall on smaller screens */
+@media (max-height: 700px) {
+    .contact-form textarea {
+        min-height: 80px;
+    }
+}
+
+/* Make legal modals a bit taller */
+#termsModal .modal-container,
+#privacyModal .modal-container,
+#imprintModal .modal-container,
+#academicIntegrityModal .modal-container {
+    max-height: 80vh;
+}
+
+/* Make sure modal body takes the available space for scrolling */
+#termsModal .modal-body,
+#privacyModal .modal-body,
+#imprintModal .modal-body,
+#academicIntegrityModal .modal-body {
+    overflow-y: auto;
+    max-height: calc(80vh - 70px); /* Subtract header height */
 }

@@ -6,6 +6,7 @@ import { initHeader } from './components/header/header.js';
 import { initFAQ } from './components/faq/faq.js';
 import { initPricing } from './components/pricing/pricing.js';
 import { initModal } from './components/modal/modal.js';
+import { initAdditionalModals } from './components/modal/additionalModals.js';
 import { initTestimonials } from './components/testimonials/testimonials.js';
 import { fadeInElements } from './utils/animations.js';
 
@@ -19,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initPricing();
     initModal();
     initTestimonials();
-    initContactModal(); // Initialize the new contact modal
+    initAdditionalModals(); // Initialize the additional modals
     
     // Apply animations
     fadeInElements();
