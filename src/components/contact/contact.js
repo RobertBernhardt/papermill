@@ -1,70 +1,99 @@
-// Contact Modal Module
+// Contact Modal Module - Fixed Version
 // Handles the contact form modal functionality
 
 /**
  * Initialize the contact modal functionality
  */
 export function initContactModal() {
-    const modal = document.getElementById('contactFormModal');
-    const modalClose = modal.querySelector('.modal-close');
-    const contactForm = modal.querySelector('.contact-form');
+    // Get the contact modal element
+    const contactModal = document.getElementById('contactFormModal');
+    if (!contactModal) {
+        console.error('Contact form modal not found');
+        return;
+    }
     
-    // Add event listeners to all contact links
+    // Attach event listeners to contact links
+    setupContactLinks(contactModal);
+    
+    // Set up modal close functionality
+    setupModalClose(contactModal);
+    
+    // Set up response options
+    setupResponseOptions(contactModal);
+    
+    // Set up form submission
+    setupFormSubmission(contactModal);
+}
+
+/**
+ * Set up event listeners for contact links
+ * @param {HTMLElement} modal - The modal element
+ */
+function setupContactLinks(modal) {
+    // Get all links that point to #contact
     const contactLinks = document.querySelectorAll('a[href="#contact"]');
+    
+    // Attach click handler to each link
     contactLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             openModal(modal);
         });
     });
-    
-    // Close modal when clicking the close button
-    modalClose.addEventListener('click', () => closeModal(modal));
-    
-    // Close modal when clicking outside the modal content
-    modal.addEventListener('click', function(event) {
-        if (event.target === modal) {
-            closeModal(modal);
-        }
-    });
-    
-    // Close modal when pressing Escape key
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape' && modal.classList.contains('active')) {
-            closeModal(modal);
-        }
-    });
-    
-    // Set up the response time options
-    setupResponseOptions(modal);
-    
-    // Handle form submission
-    setupFormSubmission(contactForm, modal);
 }
 
 /**
- * Open the contact modal
+ * Set up modal close functionality
+ * @param {HTMLElement} modal - The modal element
+ */
+function setupModalClose(modal) {
+    // Close button
+    const closeButton = modal.querySelector('.modal-close');
+    if (closeButton) {
+        closeButton.addEventListener('click', function() {
+            closeModal(modal);
+        });
+    }
+    
+    // Close when clicking outside
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeModal(modal);
+        }
+    });
+    
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal(modal);
+        }
+    });
+}
+
+/**
+ * Open the modal
  * @param {HTMLElement} modal - The modal element
  */
 function openModal(modal) {
+    // Show the modal
     modal.classList.add('active');
-    document.body.style.overflow = 'hidden'; // Prevent scrolling behind modal
+    document.body.style.overflow = 'hidden';
     
-    // Reset form
-    const contactForm = modal.querySelector('.contact-form');
-    contactForm.reset();
+    // Reset the form
+    const form = modal.querySelector('form');
+    if (form) form.reset();
     
-    // Reset response options
-    document.querySelectorAll('.response-preference .option').forEach(option => {
-        option.classList.remove('selected');
+    // Select the first response option
+    const options = modal.querySelectorAll('.response-preference .option');
+    options.forEach((option, index) => {
+        option.classList[index === 0 ? 'add' : 'remove']('selected');
     });
-    document.querySelector('.response-preference .option:first-child').classList.add('selected');
     
-    // Focus on first input
+    // Focus the first field
     setTimeout(() => {
         const firstInput = modal.querySelector('input[type="text"]');
         if (firstInput) firstInput.focus();
-    }, 400);
+    }, 300);
 }
 
 /**
@@ -73,22 +102,26 @@ function openModal(modal) {
  */
 function closeModal(modal) {
     modal.classList.remove('active');
-    document.body.style.overflow = ''; // Restore scrolling
+    document.body.style.overflow = '';
 }
 
 /**
- * Set up the response time options
+ * Set up response time options
  * @param {HTMLElement} modal - The modal element
  */
 function setupResponseOptions(modal) {
-    const responseOptions = modal.querySelectorAll('.response-preference .option');
+    const options = modal.querySelectorAll('.response-preference .option');
     
-    responseOptions.forEach(option => {
+    // Select first option by default
+    if (options.length > 0) {
+        options[0].classList.add('selected');
+    }
+    
+    // Add click handlers
+    options.forEach(option => {
         option.addEventListener('click', function() {
             // Deselect all options
-            responseOptions.forEach(opt => {
-                opt.classList.remove('selected');
-            });
+            options.forEach(opt => opt.classList.remove('selected'));
             
             // Select clicked option
             this.classList.add('selected');
@@ -97,87 +130,51 @@ function setupResponseOptions(modal) {
 }
 
 /**
- * Validate the "closest star" verification question
- * @param {string} answer - The user's answer
- * @returns {boolean} Whether the answer is correct
- */
-function validateStarQuestion(answer) {
-    if (!answer) return false;
-    
-    // Convert to lowercase and trim for more flexible validation
-    const normalizedAnswer = answer.toLowerCase().trim();
-    
-    // Accept various forms of the answer
-    const validAnswers = [
-        'sun', 'the sun', 'sol', 'the sol', 'our sun',
-        'солнце', 'sole', 'sonne', 'soleil', 'sol',
-        '太陽', '太阳', '태양', 'الشمس', 'ήλιος'
-    ];
-    
-    return validAnswers.includes(normalizedAnswer);
-}
-
-/**
- * Set up the form submission handling
- * @param {HTMLElement} contactForm - The contact form element
+ * Set up form submission
  * @param {HTMLElement} modal - The modal element
  */
-function setupFormSubmission(contactForm, modal) {
-    contactForm.addEventListener('submit', function(event) {
-        event.preventDefault();
+function setupFormSubmission(modal) {
+    const form = modal.querySelector('.contact-form');
+    if (!form) return;
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
         
-        // Get form values
-        const name = document.getElementById('contact-name').value;
-        const email = document.getElementById('contact-email').value;
-        const reason = document.getElementById('contact-reason').value;
-        const message = document.getElementById('contact-message').value;
-        const verification = document.getElementById('contact-verification').value;
+        // Validate the sun verification
+        const verification = document.getElementById('contact-verification');
+        if (!verification) return;
         
-        // Validate the star question
-        if (!validateStarQuestion(verification)) {
-            // Highlight the verification field with an error
-            const verificationInput = document.getElementById('contact-verification');
-            verificationInput.classList.add('error');
-            verificationInput.setAttribute('placeholder', 'Hint: It rhymes with "fun"');
+        const answer = verification.value.toLowerCase().trim();
+        if (!isValidSunAnswer(answer)) {
+            // Show error
+            verification.classList.add('error');
+            verification.setAttribute('placeholder', 'Hint: It rhymes with "fun"');
             
-            // Remove error class after 3 seconds
+            // Remove error after delay
             setTimeout(() => {
-                verificationInput.classList.remove('error');
-                verificationInput.setAttribute('placeholder', 'Hint: It\'s hot and gives you vitamin D');
+                verification.classList.remove('error');
+                verification.setAttribute('placeholder', 'Hint: It\'s hot and gives you vitamin D');
             }, 3000);
             
             return;
         }
         
-        // Get selected response option
-        const selectedOption = document.querySelector('.response-preference .option.selected');
-        const responseSpeed = selectedOption ? selectedOption.querySelector('.option-name').textContent : 'Eventually';
+        // Handle submission UI
+        const submitButton = form.querySelector('button[type="submit"]');
+        if (!submitButton) return;
         
-        // Simulate form submission
-        const submitButton = contactForm.querySelector('button[type="submit"]');
         const originalText = submitButton.textContent;
-        
         submitButton.textContent = 'Sending...';
         submitButton.disabled = true;
         
-        // Simulate API call with timeout
+        // Simulate sending (would be an API call in production)
         setTimeout(() => {
-            // Here you would normally send data to server
-            console.log('Contact form submitted:', {
-                name,
-                email,
-                reason,
-                message,
-                responseSpeed
-            });
-            
-            // Reset button
             submitButton.textContent = 'Message Sent!';
             
-            // Close modal after delay
             setTimeout(() => {
                 closeModal(modal);
-                // Reset button text after modal is closed
+                
+                // Reset button after closing
                 setTimeout(() => {
                     submitButton.textContent = originalText;
                     submitButton.disabled = false;
@@ -185,4 +182,18 @@ function setupFormSubmission(contactForm, modal) {
             }, 1500);
         }, 2000);
     });
+}
+
+/**
+ * Check if the sun verification answer is valid
+ * @param {string} answer - The user's answer
+ * @returns {boolean} Whether the answer is valid
+ */
+function isValidSunAnswer(answer) {
+    const validAnswers = [
+        'sun', 'the sun', 'sol', 'our sun', 
+        'sonne', 'soleil', 'sole', 'solar'
+    ];
+    
+    return validAnswers.includes(answer);
 }
