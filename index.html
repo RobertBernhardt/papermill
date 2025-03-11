@@ -418,6 +418,136 @@
         </div>
     </footer>
 
+    <!-- "Let us create a form so perfect no student can resist filling it out." - Tom, Form Maestro -->
+    <div class="modal-overlay" id="paperFormModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>Create Your Academic Masterpiece</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form class="paper-form">
+                    <div class="form-group">
+                        <label for="paper-topic">Your Paper Topic</label>
+                        <input type="text" id="paper-topic" placeholder="e.g., The impact of climate change on marine ecosystems" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="academic-discipline">Academic Discipline</label>
+                        <select id="academic-discipline" required>
+                            <option value="" disabled selected>Select your discipline</option>
+                            <option value="economics">Economics</option>
+                            <option value="history">History</option>
+                            <option value="literature">Literature</option>
+                            <option value="philosophy">Philosophy</option>
+                            <option value="psychology">Psychology</option>
+                            <option value="sociology">Sociology</option>
+                            <option value="sciences">Natural Sciences</option>
+                            <option value="arts">Arts & Humanities</option>
+                            <option value="engineering">Engineering</option>
+                            <option value="medicine">Medicine</option>
+                            <option value="law">Law</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Paper Type</label>
+                        <div class="radio-options">
+                            <label class="radio-label">
+                                <input type="radio" name="paper-type" value="seminar" checked>
+                                <span class="radio-text">Seminar Paper</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="paper-type" value="bachelor">
+                                <span class="radio-text">Bachelor Thesis</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="paper-type" value="master">
+                                <span class="radio-text">Master Thesis</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="paper-type" value="academic">
+                                <span class="radio-text">Academic Paper</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="paper-type" value="phd">
+                                <span class="radio-text">PhD Thesis</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Creativity Level</label>
+                        <div class="creativity-slider">
+                            <input type="range" min="1" max="5" value="1" id="creativity-level">
+                            <div class="slider-labels">
+                                <span>Basic</span>
+                                <span>Advanced</span>
+                                <span>Expert</span>
+                                <span>Master</span>
+                                <span>Insane</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Quality Control</label>
+                        <div class="quality-options">
+                            <label class="radio-label">
+                                <input type="radio" name="quality-control" value="basic" checked>
+                                <span class="radio-text">Basic</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="quality-control" value="advanced">
+                                <span class="radio-text">Advanced</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="quality-control" value="hardcore">
+                                <span class="radio-text">Hardcore</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Your Email</label>
+                        <input type="email" id="email" placeholder="Where should we send your paper?" required>
+                    </div>
+                    
+                    <div class="pricing-summary">
+                        <div class="pricing-details">
+                            <div class="price-row">
+                                <span>Base price:</span>
+                                <span>$5.00</span>
+                            </div>
+                            <div class="price-row" id="paper-type-price">
+                                <span>Paper type:</span>
+                                <span>+$0.00</span>
+                            </div>
+                            <div class="price-row" id="creativity-price">
+                                <span>Creativity level:</span>
+                                <span>+$0.00</span>
+                            </div>
+                            <div class="price-row" id="quality-price">
+                                <span>Quality control:</span>
+                                <span>+$0.00</span>
+                            </div>
+                            <div class="price-divider"></div>
+                            <div class="price-row total">
+                                <span>Total:</span>
+                                <span class="modal-price">$5.00</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="cta-button primary full-width">Generate My Paper</button>
+                    
+                    <p class="form-disclaimer">By clicking "Generate My Paper," you agree to our <a href="#terms">Terms of Service</a> and acknowledge that your paper will be delivered within the timeframe specified for your selected options.</p>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- "The only thing to do with good script is to pass it on. It is never of any use unexecuted." -->
     <script src="main.js"></script>
 </body>

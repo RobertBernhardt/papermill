@@ -148,14 +148,36 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
+    // ===========================
+    // PRICING SECTION SYNC - TOM'S MASTERPIECE
+    // ===========================
+    
+    // Track the currently selected options in the pricing section
+    let selectedPricingOptions = {
+        paperScope: 'Seminar Paper',
+        paperScopePrice: 0,
+        creativityLevel: 'Basic',
+        creativityLevelPrice: 0,
+        qualityControl: 'Basic',
+        qualityControlPrice: 0
+    };
+    
     // Handle total price calculation on pricing page
     const priceOptions = document.querySelectorAll('.option');
     const totalPrice = document.querySelector('.total-price .price');
     
     if (priceOptions.length > 0 && totalPrice) {
         priceOptions.forEach(option => {
+            // Get the category and option name for data tracking
+            const category = option.closest('.option-category');
+            const categoryName = category.querySelector('h3').textContent.trim();
+            const optionName = option.querySelector('.option-name').textContent.trim();
+            
+            // Add data attributes for easier selection
+            option.setAttribute('data-category', categoryName);
+            option.setAttribute('data-name', optionName);
+            
             option.addEventListener('click', function() {
-                const category = this.closest('.option-category');
                 const categoryOptions = category.querySelectorAll('.option');
                 
                 // Deselect other options in this category
@@ -165,6 +187,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Select this option
                 this.classList.add('selected');
+                
+                // Update our tracking object
+                const price = parseInt(this.dataset.price || 0);
+                
+                if (categoryName === 'Paper Scope') {
+                    selectedPricingOptions.paperScope = optionName;
+                    selectedPricingOptions.paperScopePrice = price;
+                } else if (categoryName === 'Creativity Level') {
+                    selectedPricingOptions.creativityLevel = optionName;
+                    selectedPricingOptions.creativityLevelPrice = price;
+                } else if (categoryName === 'Quality Control') {
+                    selectedPricingOptions.qualityControl = optionName;
+                    selectedPricingOptions.qualityControlPrice = price;
+                }
                 
                 // Calculate new total
                 let total = 5; // Base price
@@ -181,4 +217,265 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+
+    // ===========================
+    // Paper Form Modal Functionality
+    // ===========================
+    
+    // Modal elements
+    const modal = document.getElementById('paperFormModal');
+    const modalClose = modal.querySelector('.modal-close');
+    const paperForm = modal.querySelector('.paper-form');
+    
+    // Pricing elements inside modal
+    const paperTypePrice = document.getElementById('paper-type-price');
+    const creativityPrice = document.getElementById('creativity-price');
+    const qualityPrice = document.getElementById('quality-price');
+    const modalTotalPrice = modal.querySelector('.modal-price');
+    
+    // Price configurations
+    const paperTypePrices = {
+        'seminar': 0,
+        'bachelor': 10,
+        'master': 15,
+        'academic': 20,
+        'phd': 30
+    };
+    
+    const creativityLevelPrices = [0, 5, 10, 15, 25]; // index corresponds to level - 1
+    
+    const qualityControlPrices = {
+        'basic': 0,
+        'advanced': 10,
+        'hardcore': 25
+    };
+    
+    // Mappings for synchronizing between pricing section and modal
+    const paperTypeMapping = {
+        'Seminar Paper': 'seminar',
+        'Bachelor Thesis': 'bachelor',
+        'Master Thesis': 'master',
+        'Academic Paper': 'academic',
+        'PhD Thesis': 'phd'
+    };
+    
+    const creativityLevelMapping = {
+        'Basic': 1,
+        'Advanced': 2,
+        'Expert': 3,
+        'Master': 4,
+        'Insane': 5
+    };
+    
+    const qualityControlMapping = {
+        'Basic': 'basic',
+        'Advanced': 'advanced',
+        'Hardcore': 'hardcore'
+    };
+    
+    // Function to open modal with selected pricing options
+    function openModal() {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Prevent scrolling behind modal
+        
+        // Reset form first
+        paperForm.reset();
+        
+        // Then apply selected options from pricing section
+        applySelectedPricingOptions();
+        
+        // Update pricing in the modal
+        updateModalPrices();
+        
+        // Focus on first input
+        setTimeout(() => {
+            const firstInput = modal.querySelector('input[type="text"]');
+            if (firstInput) firstInput.focus();
+        }, 400);
+    }
+    
+    // Apply selected options from pricing section to modal
+    function applySelectedPricingOptions() {
+        // Set paper type
+        const paperTypeValue = paperTypeMapping[selectedPricingOptions.paperScope];
+        if (paperTypeValue) {
+            const paperTypeRadio = document.querySelector(`input[name="paper-type"][value="${paperTypeValue}"]`);
+            if (paperTypeRadio) paperTypeRadio.checked = true;
+        }
+        
+        // Set creativity level
+        const creativityLevel = creativityLevelMapping[selectedPricingOptions.creativityLevel];
+        if (creativityLevel) {
+            const creativitySlider = document.getElementById('creativity-level');
+            creativitySlider.value = creativityLevel;
+            
+            // Update the slider labels UI
+            updateCreativitySliderLabels(creativityLevel);
+        }
+        
+        // Set quality control
+        const qualityValue = qualityControlMapping[selectedPricingOptions.qualityControl];
+        if (qualityValue) {
+            const qualityRadio = document.querySelector(`input[name="quality-control"][value="${qualityValue}"]`);
+            if (qualityRadio) qualityRadio.checked = true;
+        }
+    }
+    
+    // Function to update creativity slider label highlights
+    function updateCreativitySliderLabels(level) {
+        const sliderLabels = document.querySelectorAll('.slider-labels span');
+        sliderLabels.forEach((label, index) => {
+            if (index === level - 1) {
+                label.style.fontWeight = '700';
+                label.style.color = 'var(--secondary)';
+            } else {
+                label.style.fontWeight = '400';
+                label.style.color = 'var(--light-text)';
+            }
+        });
+    }
+    
+    // Function to close modal
+    function closeModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = ''; // Restore scrolling
+    }
+    
+    // Calculate and update prices in the modal
+    function updateModalPrices() {
+        // Get selected paper type
+        const selectedPaperType = document.querySelector('input[name="paper-type"]:checked').value;
+        const paperTypeValue = paperTypePrices[selectedPaperType];
+        paperTypePrice.innerHTML = `<span>Paper type:</span><span>+$${paperTypeValue.toFixed(2)}</span>`;
+        
+        // Get creativity level
+        const creativityLevel = parseInt(document.getElementById('creativity-level').value);
+        const creativityValue = creativityLevelPrices[creativityLevel - 1];
+        creativityPrice.innerHTML = `<span>Creativity level:</span><span>+$${creativityValue.toFixed(2)}</span>`;
+        
+        // Get quality control
+        const selectedQuality = document.querySelector('input[name="quality-control"]:checked').value;
+        const qualityValue = qualityControlPrices[selectedQuality];
+        qualityPrice.innerHTML = `<span>Quality control:</span><span>+$${qualityValue.toFixed(2)}</span>`;
+        
+        // Calculate total
+        const total = 5 + paperTypeValue + creativityValue + qualityValue;
+        modalTotalPrice.textContent = `$${total.toFixed(2)}`;
+        modalTotalPrice.classList.add('price-pulse');
+        setTimeout(() => {
+            modalTotalPrice.classList.remove('price-pulse');
+        }, 500);
+    }
+    
+    // Add event listeners to pricing section CTA button
+    const pricingCTA = document.querySelector('.pricing-cta .cta-button');
+    if (pricingCTA) {
+        pricingCTA.addEventListener('click', openModal);
+    }
+    
+    // Add event listeners to all other CTA buttons
+    const ctaButtons = document.querySelectorAll('.cta-button:not(.pricing-cta .cta-button)');
+    ctaButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Reset to default options when opened from buttons outside pricing section
+            selectedPricingOptions = {
+                paperScope: 'Seminar Paper',
+                paperScopePrice: 0,
+                creativityLevel: 'Basic',
+                creativityLevelPrice: 0,
+                qualityControl: 'Basic',
+                qualityControlPrice: 0
+            };
+            
+            openModal();
+        });
+    });
+    
+    // Close modal when clicking the close button
+    modalClose.addEventListener('click', closeModal);
+    
+    // Close modal when clicking outside the modal content
+    modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+    
+    // Close modal when pressing Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+    
+    // Update pricing when selections change
+    document.querySelectorAll('input[name="paper-type"]').forEach(radio => {
+        radio.addEventListener('change', updateModalPrices);
+    });
+    
+    document.getElementById('creativity-level').addEventListener('input', function() {
+        updateCreativitySliderLabels(parseInt(this.value));
+        updateModalPrices();
+    });
+    
+    document.querySelectorAll('input[name="quality-control"]').forEach(radio => {
+        radio.addEventListener('change', updateModalPrices);
+    });
+    
+    // Handle form submission
+    paperForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        // Get form values
+        const paperTopic = document.getElementById('paper-topic').value;
+        const academicDiscipline = document.getElementById('academic-discipline').value;
+        const paperType = document.querySelector('input[name="paper-type"]:checked').value;
+        const creativityLevel = document.getElementById('creativity-level').value;
+        const qualityControl = document.querySelector('input[name="quality-control"]:checked').value;
+        const email = document.getElementById('email').value;
+        
+        // Simulate form submission
+        const submitButton = paperForm.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        
+        submitButton.textContent = 'Processing...';
+        submitButton.disabled = true;
+        
+        // Simulate API call with timeout
+        setTimeout(() => {
+            // Here you would normally send data to server
+            console.log('Paper requested:', {
+                topic: paperTopic,
+                discipline: academicDiscipline,
+                type: paperType,
+                creativityLevel: creativityLevel,
+                qualityControl: qualityControl,
+                email: email
+            });
+            
+            // Reset button
+            submitButton.textContent = 'Success! Redirecting...';
+            
+            // Close modal after delay
+            setTimeout(() => {
+                closeModal();
+                // Reset button text after modal is closed
+                setTimeout(() => {
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                }, 500);
+            }, 1500);
+        }, 2000);
+    });
+    
+    // Add creativity level slider labels highlighting
+    const creativitySlider = document.getElementById('creativity-level');
+    const sliderLabels = document.querySelectorAll('.slider-labels span');
+    
+    // Set initial slider label highlight
+    sliderLabels[0].style.fontWeight = '700';
+    sliderLabels[0].style.color = 'var(--secondary)';
+    
+    // Initialize the pricing in the modal
+    updateModalPrices();
 });
