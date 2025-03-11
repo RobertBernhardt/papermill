@@ -1,0 +1,1047 @@
+/* 
+   "Art should never try to be popular. The public should try to make itself artistic."
+   Yet this stylesheet shall both captivate and educate the viewer's eye.
+*/
+
+/* Base Styles */
+:root {
+    --primary: #1A365D;    /* A deep, intellectual blue */
+    --secondary: #7E57C2;  /* A vibrant, creative purple */
+    --accent: #FFD166;     /* A witty, energetic yellow */
+    --background: #FFFFFF; /* Crisp white */
+    --text: #333333;       /* Dark charcoal */
+    --light-text: #666666; /* For less emphasis */
+    --border: #E0E0E0;     /* Subtle borders */
+    --paper-texture: url('data:image/png;base64,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');
+}
+
+/* Reset and Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* "Fashion is a form of ugliness so intolerable that we have to alter it every six months." - We aim for timeless design instead. */
+body {
+    font-family: 'Open Sans', sans-serif;
+    color: var(--text);
+    line-height: 1.6;
+    background-color: var(--background);
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+a {
+    color: var(--secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--primary);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+em.wink {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    display: inline-block;
+    transform: translateY(-1px);
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+}
+
+section {
+    padding: 5rem 0;
+}
+
+section:nth-child(even) {
+    background-color: #f9f9f9;
+    position: relative;
+}
+
+section:nth-child(even)::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: var(--paper-texture);
+    opacity: 0.05;
+    pointer-events: none;
+}
+
+.section-intro {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+}
+
+.section-intro h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.section-intro p {
+    font-size: 1.1rem;
+    color: var(--light-text);
+}
+
+/* "A well-tied tie is the first serious step in life." — A well-designed header is the first serious step in web design. */
+.site-header {
+    background-color: var(--background);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.site-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo h1 {
+    font-size: 1.5rem;
+    margin: 0;
+    color: var(--primary);
+}
+
+.logo-icon {
+    width: 24px;
+    height: 24px;
+    margin-left: 8px;
+    fill: var(--accent);
+}
+
+.main-nav ul {
+    display: flex;
+    list-style: none;
+}
+
+.main-nav li {
+    margin-left: 1.5rem;
+}
+
+.main-nav a {
+    font-weight: 600;
+    color: var(--primary);
+    position: relative;
+    padding-bottom: 5px;
+}
+
+.main-nav a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--secondary);
+    transition: width 0.3s ease;
+}
+
+.main-nav a:hover::after {
+    width: 100%;
+}
+
+.header-cta .cta-button {
+    background-color: var(--secondary);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.header-cta .cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(126, 87, 194, 0.3);
+}
+
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    cursor: pointer;
+}
+
+.mobile-menu-toggle span {
+    height: 3px;
+    width: 100%;
+    background-color: var(--primary);
+    border-radius: 2px;
+}
+
+/* "There is only one thing in life worse than being talked about, and that is not being talked about." - Our hero section ensures conversation. */
+.hero {
+    padding: 6rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: var(--paper-texture);
+    opacity: 0.03;
+    pointer-events: none;
+}
+
+.hero .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.hero-content {
+    flex: 1;
+    max-width: 600px;
+}
+
+.hero-content h2 {
+    font-size: 3rem;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    color: var(--primary);
+}
+
+.hero-content .subheadline {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    color: var(--light-text);
+}
+
+.cta-area {
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.cta-button {
+    background-color: var(--secondary);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(126, 87, 194, 0.4);
+}
+
+.cta-button.primary {
+    background-color: var(--secondary);
+}
+
+.cta-button.large {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+}
+
+.cta-link {
+    margin-left: 1.5rem;
+    color: var(--secondary);
+    font-weight: 600;
+    position: relative;
+}
+
+.cta-link::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: var(--secondary);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+}
+
+.cta-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.supporting-text {
+    font-size: 0.95rem;
+    color: var(--light-text);
+}
+
+.hero-visualization {
+    flex: 1;
+    max-width: 500px;
+    height: 300px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.animation-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.animation-stage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    animation: stageCycle 8s infinite;
+}
+
+.stage-1 {
+    animation-delay: 0s;
+}
+
+.stage-2 {
+    animation-delay: 2.67s;
+}
+
+.stage-3 {
+    animation-delay: 5.33s;
+}
+
+@keyframes stageCycle {
+    0%, 25% { opacity: 1; }
+    33%, 100% { opacity: 0; }
+}
+
+.topic-input {
+    width: 60%;
+    padding: 15px;
+    border: 2px solid var(--secondary);
+    border-radius: 4px;
+    color: var(--text);
+    font-size: 1rem;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(126, 87, 194, 0.2);
+}
+
+.processing-animation {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.gear {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px dashed var(--accent);
+    animation: rotate 3s linear infinite;
+}
+
+.paper {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 60px;
+    height: 80px;
+    background-color: white;
+    border-radius: 4px;
+    transform: rotate(-15deg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.paper::before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    height: 2px;
+    background-color: var(--border);
+    box-shadow: 0 10px 0 var(--border), 0 20px 0 var(--border), 0 30px 0 var(--border), 0 40px 0 var(--border);
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.document-result {
+    width: 70%;
+    height: 70%;
+    background-color: white;
+    border-radius: 6px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.doc-line {
+    height: 8px;
+    background-color: var(--border);
+    margin-bottom: 14px;
+    border-radius: 4px;
+}
+
+.doc-line:nth-child(1) {
+    width: 90%;
+}
+
+.doc-line:nth-child(2) {
+    width: 70%;
+}
+
+.doc-line:nth-child(3) {
+    width: 85%;
+}
+
+.doc-line:nth-child(4) {
+    width: 65%;
+}
+
+.doc-line:nth-child(5) {
+    width: 80%;
+}
+
+/* "Experience is simply the name we give our mistakes." - Our process leaves no room for such experiences. */
+.how-it-works {
+    background-color: #f9f9f9;
+}
+
+.process-steps {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 3rem;
+}
+
+.step {
+    flex: 1;
+    text-align: center;
+    padding: 0 15px;
+    position: relative;
+    z-index: 2;
+}
+
+.step-icon {
+    width: 80px;
+    height: 80px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 2;
+}
+
+.step-icon svg {
+    width: 40px;
+    height: 40px;
+    fill: var(--accent);
+}
+
+.step h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+.step p {
+    font-size: 0.95rem;
+    color: var(--light-text);
+}
+
+.step-connector {
+    flex: 0.5;
+    height: 2px;
+    background: linear-gradient(90deg, var(--border) 0%, var(--border) 100%);
+    background-size: 10px 2px;
+    background-repeat: repeat-x;
+    margin-top: 40px;
+    position: relative;
+}
+
+.step-connector::before {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-top: 2px solid var(--border);
+    border-right: 2px solid var(--border);
+    top: -5px;
+    right: 0;
+    transform: rotate(45deg);
+}
+
+/* "I think that God, in creating man, somewhat overestimated his ability." — Our pricing, however, is designed for even the simplest minds. */
+.pricing {
+    background-color: white;
+}
+
+.base-price {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.base-price h3 {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.base-price .price {
+    font-size: 2.5rem;
+    color: var(--secondary);
+}
+
+.base-price p {
+    color: var(--light-text);
+    margin-top: 1rem;
+}
+
+.option-categories {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.option-category {
+    flex: 1;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+}
+
+.option-category h3 {
+    font-size: 1.3rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.option {
+    padding: 0.8rem 1rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.option:hover {
+    border-color: var(--secondary);
+    transform: translateY(-2px);
+}
+
+.option.selected {
+    background-color: rgba(126, 87, 194, 0.1);
+    border-color: var(--secondary);
+}
+
+.option-name {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.option-price {
+    color: var(--secondary);
+    font-weight: 600;
+}
+
+.total-price {
+    text-align: center;
+    margin: 2rem 0;
+    font-size: 1.5rem;
+}
+
+.total-price .price {
+    font-size: 2.5rem;
+    color: var(--secondary);
+    animation: priceChange 0.5s ease;
+}
+
+@keyframes priceChange {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.pricing-cta {
+    text-align: center;
+}
+
+/* "Anyone who lives within their means suffers from a lack of imagination." - Our examples liberate the imagination. */
+.examples {
+    background-color: #f9f9f9;
+}
+
+.example-papers {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.example-paper {
+    flex: 1;
+    background-color: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.example-paper::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 70%, rgba(255, 255, 255, 0.9) 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.example-paper h3 {
+    font-size: 1.2rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+.paper-meta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.paper-meta span {
+    background-color: rgba(26, 54, 93, 0.1);
+    color: var(--primary);
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.paper-excerpt {
+    margin-bottom: 1.5rem;
+    max-height: 150px;
+    overflow: hidden;
+    position: relative;
+}
+
+.paper-excerpt p {
+    font-size: 0.95rem;
+    color: var(--light-text);
+    line-height: 1.6;
+}
+
+.quality-score {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.score {
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.score-bar {
+    flex: 1;
+    height: 6px;
+    background-color: rgba(26, 54, 93, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.score-fill {
+    height: 100%;
+    background-color: var(--secondary);
+    border-radius: 3px;
+}
+
+.examples-cta {
+    text-align: center;
+}
+
+/* "I never travel without my diary. One should always have something sensational to read on the train." - Our testimonials are just as sensational. */
+.testimonials {
+    padding: 5rem 0;
+    background-color: white;
+}
+
+.testimonial-cards {
+    display: flex;
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.testimonial {
+    flex: 1;
+    background-color: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.testimonial::before {
+    content: """;
+    position: absolute;
+    top: -20px;
+    left: 20px;
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    color: rgba(126, 87, 194, 0.1);
+    line-height: 1;
+}
+
+.testimonial .quote {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.testimonial .author {
+    font-weight: 600;
+    color: var(--light-text);
+}
+
+/* "The only thing to do with good advice is to pass it on. It is never of any use to oneself." - Our FAQ section passes it on liberally. */
+.faq {
+    background-color: #f9f9f9;
+}
+
+.faq-accordion {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    background-color: white;
+}
+
+.faq-question {
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    background-color: white;
+    transition: background-color 0.3s ease;
+}
+
+.faq-question:hover {
+    background-color: rgba(126, 87, 194, 0.05);
+}
+
+.faq-question h3 {
+    font-size: 1.1rem;
+    margin: 0;
+    color: var(--primary);
+}
+
+.expand-icon {
+    font-size: 1.5rem;
+    color: var(--secondary);
+    transition: transform 0.3s ease;
+}
+
+.faq-answer {
+    padding: 0 1.5rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+/* Use data attributes instead of first-child selectors */
+.faq-item[data-open="true"] .faq-answer {
+    max-height: 500px;
+    padding: 0 1.5rem 1.5rem;
+}
+
+.faq-item[data-open="true"] .expand-icon {
+    transform: rotate(45deg);
+}
+
+.faq-answer p {
+    color: var(--light-text);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.faq-cta {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+/* "In this world there are only two tragedies. One is not getting what one wants, and the other is getting it." - Our CTA ensures the former tragedy never occurs. */
+.pre-footer-cta {
+    text-align: center;
+    padding: 5rem 0;
+    background: linear-gradient(135deg, var(--primary) 0%, #0F2B4F 100%);
+    color: white;
+}
+
+.pre-footer-cta h2 {
+    color: white;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.pre-footer-cta p {
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    opacity: 0.9;
+}
+
+.pre-footer-cta .cta-button {
+    background-color: var(--accent);
+    color: var(--primary);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.pre-footer-cta .supporting-text {
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+/* "It is a very sad thing that nowadays there is so little useless information." - Our footer provides just enough. */
+.site-footer {
+    background-color: #1a2a3a;
+    color: white;
+    padding: 4rem 0 2rem;
+}
+
+.footer-columns {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 3rem;
+}
+
+.footer-column {
+    flex: 1;
+}
+
+.footer-logo h2 {
+    color: white;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.tagline {
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 1.5rem;
+}
+
+.copyright {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.footer-column h3 {
+    color: white;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+
+.footer-links {
+    list-style: none;
+}
+
+.footer-links li {
+    margin-bottom: 0.8rem;
+}
+
+.footer-links a {
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: white;
+}
+
+.footer-links a.ironic {
+    font-style: italic;
+    position: relative;
+}
+
+.footer-links a.ironic::after {
+    content: "*";
+    font-size: 1.2em;
+    position: relative;
+    top: -3px;
+    color: var(--accent);
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1.5rem;
+    text-align: center;
+}
+
+.footer-bottom p {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* "Nothing succeeds like excess." - Mobile views shall succeed with restraint instead. */
+@media (max-width: 991px) {
+    .process-steps {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .step {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .step-connector {
+        width: 2px;
+        height: 40px;
+        margin: 0 auto;
+        transform: rotate(90deg);
+    }
+    
+    .option-categories {
+        flex-direction: column;
+    }
+    
+    .example-papers {
+        flex-direction: column;
+    }
+    
+    .testimonial-cards {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 768px) {
+    .site-header .container {
+        flex-wrap: wrap;
+    }
+    
+    .main-nav {
+        display: none;
+    }
+    
+    .mobile-menu-toggle {
+        display: flex;
+    }
+    
+    .hero .container {
+        flex-direction: column;
+    }
+    
+    .hero-content {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .cta-area {
+        justify-content: center;
+    }
+    
+    .hero-visualization {
+        width: 100%;
+    }
+    
+    .footer-columns {
+        flex-direction: column;
+        gap: 2rem;
+    }
+}
+
+/* "A thing is not necessarily true because a man dies for it." — An animation is not necessarily good because it took effort to create. */
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.cta-button, .section-intro, .step, .option-category, .example-paper, .testimonial, .faq-item {
+    animation: fadeUp 0.6s ease forwards;
+    opacity: 0;
+}
+
+.section-intro { animation-delay: 0.1s; }
+.step:nth-child(1) { animation-delay: 0.2s; }
+.step:nth-child(3) { animation-delay: 0.3s; }
+.step:nth-child(5) { animation-delay: 0.4s; }
+.step:nth-child(7) { animation-delay: 0.5s; }
+.option-category:nth-child(1) { animation-delay: 0.2s; }
+.option-category:nth-child(2) { animation-delay: 0.3s; }
+.option-category:nth-child(3) { animation-delay: 0.4s; }
+.example-paper:nth-child(1) { animation-delay: 0.2s; }
+.example-paper:nth-child(2) { animation-delay: 0.3s; }
+.example-paper:nth-child(3) { animation-delay: 0.4s; }
+.testimonial:nth-child(1) { animation-delay: 0.2s; }
+.testimonial:nth-child(2) { animation-delay: 0.3s; }
+.testimonial:nth-child(3) { animation-delay: 0.4s; }
+
+/* "Be yourself; everyone else is already taken." — Our JavaScript behavior remains uniquely its own, as will each paper. *//0QQsYacL/MlXrQlStf/HXvnHVfQsZLyMRYmXl5oixeWCxLm0sCgNJW2nxvokxUa0+MlbH6eNJBSKnH0TK/uFiWNpe7Elry89Xa1fqHUwkJGS+TpyZbGnl+cbxNGD1E0Wcmy+S9sbG0hIzVD7qIvp8fxK7f+nhpbKwUIeO1kMu9iDjkkmvHDxs59bpqzeqWdRW9z/6kHwk5mEDI37UgNgnpQMZIGN0gQpaXy2SJP3Sj7wsgY8ZsWYZe63C7kOry4uzvcw8kgbPJDOoOmQ1AxkhuUBcgY5SQEUTHYtci6SBj5Ck+8lGE1NHRqEU1LnUdKz9CkO7q3MKlJDJGRhAZDVIm8nZUcQnZ6KXtGCElG6H1XEYOGSMJlzlCRh4Z6whJ1HZMZt2uTnuQUSY6IqODlLGs78nkCLmTb3eODSQZyU4qyMgjo/uMSr+bcztmjglJuV0da2vcBZIxklB7wslIIGPE1HZMJt6uHluJvjGQZCTcrrLIGEm4vRllJCNkNOF2dRQKp0EYSDImYHQ0HoUbzSFj4qmwaxn9nJCQ8nZ
