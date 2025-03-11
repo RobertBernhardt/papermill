@@ -107,11 +107,12 @@ section:nth-child(even)::before {
 /* "A well-tied tie is the first serious step in life." — A well-designed header is the first serious step in web design. */
 .site-header {
     background-color: var(--background);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     padding: 1rem 0;
     position: sticky;
     top: 0;
     z-index: 1000;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .site-header .container {
@@ -125,10 +126,38 @@ section:nth-child(even)::before {
     align-items: center;
 }
 
+/* Logo link styles - making the whole logo area clickable */
+.logo {
+    position: relative;
+}
+
+.logo a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    padding: 0.5rem 0;
+}
+
+.logo a:hover {
+    transform: translateY(-2px) scale(1.02);
+}
+
+.logo a:hover .logo-icon {
+    transform: rotate(10deg) scale(1.1);
+}
+
+.logo a:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(126, 87, 194, 0.3);
+}
+
 .logo h1 {
     font-size: 1.5rem;
     margin: 0;
     color: var(--primary);
+    font-weight: 700;
 }
 
 .logo-icon {
@@ -136,22 +165,57 @@ section:nth-child(even)::before {
     height: 24px;
     margin-left: 8px;
     fill: var(--accent);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .main-nav ul {
     display: flex;
     list-style: none;
+    align-items: center;
 }
 
 .main-nav li {
-    margin-left: 1.5rem;
+    margin: 0 2rem;
+    position: relative;
+}
+
+.main-nav li:not(:last-child)::after {
+    content: '•';
+    position: absolute;
+    right: -2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary);
+    font-size: 0.8rem;
+    opacity: 0.7;
 }
 
 .main-nav a {
     font-weight: 600;
     color: var(--primary);
     position: relative;
-    padding-bottom: 5px;
+    padding: 0.5rem 0;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.main-nav a svg {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    fill: var(--primary);
+    transition: transform 0.3s ease, fill 0.3s ease;
+    opacity: 0.8;
+}
+
+.main-nav a:hover {
+    color: var(--secondary);
+}
+
+.main-nav a:hover svg {
+    fill: var(--secondary);
+    transform: scale(1.2);
 }
 
 .main-nav a::after {
@@ -172,17 +236,27 @@ section:nth-child(even)::before {
 .header-cta .cta-button {
     background-color: var(--secondary);
     color: white;
-    padding: 0.6rem 1.2rem;
-    border-radius: 4px;
+    padding: 0.7rem 1.4rem;
+    border-radius: 6px;
     font-weight: 600;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    z-index: 1;
+    font-size: 0.95rem;
 }
 
 .header-cta .cta-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(126, 87, 194, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(126, 87, 194, 0.2);
+    background-color: #8A65D3;
 }
 
+.header-cta .cta-button:active {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(126, 87, 194, 0.15);
+}
+
+/* Mobile menu toggle animation */
 .mobile-menu-toggle {
     display: none;
     flex-direction: column;
@@ -190,6 +264,12 @@ section:nth-child(even)::before {
     width: 30px;
     height: 21px;
     cursor: pointer;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.mobile-menu-toggle:hover {
+    transform: scale(1.1);
 }
 
 .mobile-menu-toggle span {
@@ -197,6 +277,67 @@ section:nth-child(even)::before {
     width: 100%;
     background-color: var(--primary);
     border-radius: 2px;
+    transition: all 0.3s ease;
+    display: block;
+}
+
+.mobile-menu-toggle.active span:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.mobile-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-toggle.active span:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
+
+/* Mobile nav styles */
+@media (max-width: 768px) {
+    .main-nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: var(--primary);
+        padding: 5rem 2rem 2rem;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 900;
+    }
+    
+    .main-nav.active {
+        display: flex;
+        animation: slideIn 0.3s ease forwards;
+    }
+    
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .main-nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .main-nav li {
+        margin: 1rem 0;
+    }
+    
+    .main-nav a {
+        color: white;
+        font-size: 1.5rem;
+        padding: 0.5rem 1rem;
+    }
+    
+    .main-nav a::after {
+        background-color: white;
+    }
 }
 
 /* "There is only one thing in life worse than being talked about, and that is not being talked about." - Our hero section ensures conversation. */
@@ -893,6 +1034,18 @@ section:nth-child(even)::before {
     margin-bottom: 1rem;
 }
 
+/* Add styles for the footer logo link */
+.footer-logo a {
+    color: white;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+    display: inline-block;
+}
+
+.footer-logo a:hover {
+    opacity: 0.85;
+}
+
 .tagline {
     color: rgba(255, 255, 255, 0.7);
     margin-bottom: 1.5rem;
@@ -1015,6 +1168,47 @@ section:nth-child(even)::before {
     .footer-columns {
         flex-direction: column;
         gap: 2rem;
+    }
+    
+    /* Improved mobile menu styling */
+    .main-nav.active {
+        display: flex;
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        background-color: rgba(26, 54, 93, 0.9);
+    }
+    
+    .main-nav.active ul {
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+        gap: 1.5rem;
+    }
+    
+    .main-nav.active li {
+        margin: 0;
+        width: 80%;
+        max-width: 300px;
+    }
+    
+    .main-nav.active li::after {
+        display: none;
+    }
+    
+    .main-nav.active a {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+        padding: 0.8rem 1.5rem;
+        color: white;
+    }
+    
+    .main-nav.active a:hover {
+        transform: translateY(-3px);
+    }
+    
+    .main-nav.active a svg {
+        fill: white;
     }
 }
 
