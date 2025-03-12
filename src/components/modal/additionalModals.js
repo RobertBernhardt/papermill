@@ -15,15 +15,100 @@ export function initAdditionalModals() {
 }
 
 /**
+ * Create a fill-in-the-blank style contact form
+ * @returns {HTMLElement} The created form element
+ */
+function createFillInTheBlankContactForm() {
+    // Create the form element
+    const form = document.createElement('form');
+    form.className = 'contact-form fill-in-the-blank-form';
+    
+    // Create the form content with blanks for user input
+    form.innerHTML = `
+        <div class="narrative-container">
+            <p class="narrative-text">
+                Dear Paper Mill Wizards,<br><br>
+                
+                My name is <span class="blank-container">
+                    <input type="text" id="contact-name" placeholder="your distinguished name" required>
+                </span> 
+                and you can reach me at <span class="blank-container">
+                    <input type="email" id="contact-email" placeholder="your secret email" required>
+                </span>.<br><br>
+                
+                I am writing to you because <span class="blank-container subject-container">
+                    <select id="contact-subject" required>
+                        <option value="" disabled selected>select your predicament</option>
+                        <option value="existential">I'm having an existential crisis about my paper deadline</option>
+                        <option value="technical">your magical system seems to be malfunctioning</option>
+                        <option value="quality">I need to discuss the brilliance (or lack thereof) of my paper</option>
+                        <option value="business">I want to propose a business deal that will make us both rich</option>
+                        <option value="praise">I simply need to praise your genius publicly</option>
+                        <option value="complaint">I must register a formal complaint (with utmost politeness)</option>
+                        <option value="question">I have a burning question keeping me up at night</option>
+                        <option value="other">something completely different is happening</option>
+                    </select>
+                </span>.<br><br>
+                
+                Here are the details of my situation:<br>
+                <span class="blank-container message-container">
+                    <textarea id="contact-message" rows="4" placeholder="your deeply fascinating message..." required></textarea>
+                </span><br><br>
+                
+                I expect your response to be <span class="blank-container">
+                    <select id="response-time">
+                        <option value="urgent">lightning-fast (I'm literally refreshing my inbox)</option>
+                        <option value="normal" selected>reasonably timely</option>
+                        <option value="whenever">whenever (I've mastered the art of patience)</option>
+                    </select>
+                </span> and would rate my current stress level as <span class="blank-container">
+                    <select id="stress-level">
+                        <option value="low">perfectly calm (unusual for a student)</option>
+                        <option value="medium" selected>mildly concerning</option>
+                        <option value="high">approaching cosmic meltdown</option>
+                        <option value="extreme">beyond the measurement capabilities of modern science</option>
+                    </select>
+                </span>.<br><br>
+                
+                Academically yours,<br>
+                <span class="signature-name">Your name will appear here magically</span>
+            </p>
+        </div>
+        
+        <button type="submit" class="cta-button primary full-width">Send This Masterpiece</button>
+        
+        <p class="form-disclaimer">We'll respond to your inquiry within 24-48 hours, regardless of how desperate you sound. Your information will be processed in accordance with our <a href="#privacy" data-modal="privacy">Privacy Policy</a>.</p>
+    `;
+    
+    // Add event listeners for dynamic aspects
+    const nameInput = form.querySelector('#contact-name');
+    nameInput.addEventListener('input', function() {
+        const signatureName = this.value.trim() || 'Your name will appear here magically';
+        form.querySelector('.signature-name').textContent = signatureName;
+    });
+    
+    return form;
+}
+
+/**
  * Set up the contact modal
  */
 function setupContactModal() {
-    // Get the contact modal and its elements
+    // Get the contact modal
     const contactModal = document.getElementById('contactModal');
     if (!contactModal) return;
     
-    const contactModalClose = contactModal.querySelector('.modal-close');
-    const contactForm = contactModal.querySelector('form');
+    const modalBody = contactModal.querySelector('.modal-body');
+    const modalClose = contactModal.querySelector('.modal-close');
+    
+    // Replace the existing form with our new fill-in-the-blank form
+    const existingForm = modalBody.querySelector('form');
+    if (existingForm) {
+        modalBody.removeChild(existingForm);
+    }
+    
+    const newForm = createFillInTheBlankContactForm();
+    modalBody.appendChild(newForm);
     
     // Add event listeners to contact modal triggers
     const contactTriggers = document.querySelectorAll('[data-modal="contact"]');
@@ -31,11 +116,17 @@ function setupContactModal() {
         trigger.addEventListener('click', (e) => {
             e.preventDefault();
             openModal(contactModal);
+            
+            // Focus on the first input after a short delay (for animation to complete)
+            setTimeout(() => {
+                const firstInput = newForm.querySelector('#contact-name');
+                if (firstInput) firstInput.focus();
+            }, 400);
         });
     });
     
     // Close modal when clicking the close button
-    contactModalClose.addEventListener('click', () => closeModal(contactModal));
+    modalClose.addEventListener('click', () => closeModal(contactModal));
     
     // Close modal when clicking outside the modal content
     contactModal.addEventListener('click', function(event) {
@@ -44,39 +135,39 @@ function setupContactModal() {
         }
     });
     
-    // Handle form submission if a form exists
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(event) {
-            event.preventDefault();
+    // Handle form submission
+    newForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        // Simulate form submission
+        const submitButton = newForm.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        
+        submitButton.textContent = 'Sending Your Masterpiece...';
+        submitButton.disabled = true;
+        
+        // Simulate API call with timeout
+        setTimeout(() => {
+            // Here you would normally send data to server
+            console.log('Contact form submitted');
             
-            // Simulate form submission
-            const submitButton = contactForm.querySelector('button[type="submit"]');
-            const originalText = submitButton.textContent;
+            // Reset button
+            submitButton.textContent = 'Masterpiece Delivered!';
             
-            submitButton.textContent = 'Sending...';
-            submitButton.disabled = true;
-            
-            // Simulate API call with timeout
+            // Close modal after delay
             setTimeout(() => {
-                // Here you would normally send data to server
-                console.log('Contact form submitted');
-                
-                // Reset button
-                submitButton.textContent = 'Message Sent!';
-                
-                // Close modal after delay
+                closeModal(contactModal);
+                // Reset button text after modal is closed
                 setTimeout(() => {
-                    closeModal(contactModal);
-                    // Reset button text after modal is closed
-                    setTimeout(() => {
-                        submitButton.textContent = originalText;
-                        submitButton.disabled = false;
-                        contactForm.reset();
-                    }, 500);
-                }, 1500);
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                    newForm.reset();
+                    // Reset the signature line
+                    newForm.querySelector('.signature-name').textContent = 'Your name will appear here magically';
+                }, 500);
             }, 1500);
-        });
-    }
+        }, 1500);
+    });
 }
 
 /**
@@ -87,6 +178,7 @@ function setupLegalModals() {
     const termsModal = document.getElementById('termsModal');
     const privacyModal = document.getElementById('privacyModal');
     const imprintModal = document.getElementById('imprintModal');
+    const academicIntegrityModal = document.getElementById('academicIntegrityModal');
     
     // Set up event listeners for terms modal
     setupLegalModal(termsModal, '[data-modal="terms"]');
@@ -96,6 +188,9 @@ function setupLegalModals() {
     
     // Set up event listeners for imprint modal
     setupLegalModal(imprintModal, '[data-modal="imprint"]');
+    
+    // Set up event listeners for academic integrity modal
+    setupLegalModal(academicIntegrityModal, '[data-modal="integrity"]');
 }
 
 /**
