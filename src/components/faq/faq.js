@@ -5,9 +5,29 @@
  * Initialize the FAQ accordion functionality
  */
 export function initFAQ() {
+    renderAllFAQs();
     setupFAQAccordion();
-    addAdditionalFAQs();
-    updateExistingFAQContent();
+}
+
+/**
+ * Render all FAQs from our centralized data
+ */
+function renderAllFAQs() {
+    const faqAccordion = document.querySelector('.faq-accordion');
+    
+    // Clear any existing FAQ items (in case of re-initialization)
+    faqAccordion.innerHTML = '';
+    
+    // Get all FAQ items from our centralized data
+    const allFaqs = getAllFAQs();
+    
+    // Create and append each FAQ item
+    allFaqs.forEach((faq, index) => {
+        const faqItem = createFAQItem(faq.question, faq.answer);
+        // First item starts open
+        faqItem.setAttribute('data-open', index === 0 ? 'true' : 'false');
+        faqAccordion.appendChild(faqItem);
+    });
 }
 
 /**
@@ -17,16 +37,13 @@ function setupFAQAccordion() {
     const faqItems = document.querySelectorAll('.faq-item');
     
     // Properly set up all FAQ items
-    faqItems.forEach((item, index) => {
+    faqItems.forEach((item) => {
         const question = item.querySelector('.faq-question');
         const answer = item.querySelector('.faq-answer');
         const expandIcon = item.querySelector('.expand-icon');
         
-        // Set a data attribute to track state
-        item.setAttribute('data-open', index === 0 ? 'true' : 'false');
-        
         // Set initial visual state
-        if (index === 0) {
+        if (item.getAttribute('data-open') === 'true') {
             // First item starts open
             answer.style.maxHeight = answer.scrollHeight + 30 + 'px';
             answer.style.padding = '0 1.5rem 1.5rem';
@@ -83,37 +100,6 @@ function openFAQItem(item) {
 }
 
 /**
- * Add additional FAQ items dynamically
- */
-function addAdditionalFAQs() {
-    const faqAccordion = document.querySelector('.faq-accordion');
-    
-    const additionalFaqs = [
-        {
-            question: "Isn't this just plagiarism with extra steps?",
-            answer: "Plagiarism is taking someone else's work without attribution. This is generating entirely new work that never existed before. It's like the difference between stealing a painting and commissioning an artist to paint something similar. One gets you arrested, the other gets you praised for your discerning taste. Though we do suggest you read whatever you submit—ignorance may be bliss, but it makes for awkward questions during oral examinations"
-        },
-        {
-            question: "What if my professor recognizes I couldn't possibly have written this?",
-            answer: "Ah, the curse of sudden brilliance! We suggest a gradual approach to intellectual transformation. Perhaps don't go from writing like a sleep-deprived hamster to Foucault overnight. Our 'Basic' creativity level exists for a reason—it's the academic equivalent of not wearing a tuxedo to a fast food restaurant. If you must suddenly display genius, consider developing a backstory about a transformative summer reading experience or a new vitamin regimen"
-        },
-        {
-            question: "Do you offer a 'make this sound like I wrote it at 3 AM' option?",
-            answer: "While we don't explicitly offer a 'desperate procrastinator' style preset, you can always edit our polished work to insert a strategic typo or two, remove several Oxford commas, and replace sophisticated transitions with 'and then' or 'also.' For the authentic 3 AM experience, randomly delete a citation and replace one paragraph with a slightly off-topic rant. Your professor will never suspect you had help"
-        },
-        {
-            question: "How do I explain my sudden expertise in quantum mechanics?",
-            answer: "The same way one explains any unexpected talent: vague references to 'always being interested in the subject' or having 'picked it up during the pandemic.' If pressed further, mention a distant relative who works in the field or claim you've been watching a lot of documentaries lately. Remember, the truly educated person knows how to nod thoughtfully while saying very little. A strategically placed 'it's complicated' can work wonders"
-        }
-    ];
-    
-    additionalFaqs.forEach(faq => {
-        const faqItem = createFAQItem(faq.question, faq.answer);
-        faqAccordion.appendChild(faqItem);
-    });
-}
-
-/**
  * Create a new FAQ item element
  * @param {string} questionText - The FAQ question
  * @param {string} answerText - The FAQ answer
@@ -141,43 +127,58 @@ function createFAQItem(questionText, answerText) {
     answer.style.padding = '0 1.5rem';
     expandIcon.style.transform = 'rotate(0deg)';
     
-    // Add event listener to new FAQ item
-    const question = faqItem.querySelector('.faq-question');
-    question.addEventListener('click', function() {
-        const wasOpen = faqItem.getAttribute('data-open') === 'true';
-        closeAllFAQItems();
-        if (!wasOpen) {
-            openFAQItem(faqItem);
-        }
-    });
-    
     return faqItem;
 }
 
 /**
- * Update the content of existing FAQ items with wittier responses
+ * Get all FAQ data in one centralized place
+ * @returns {Array} Array of FAQ objects with question and answer properties
  */
-function updateExistingFAQContent() {
-    const existingFaqAnswers = [
-        "That's a philosophical question, isn't it? Our service is designed as a research and learning tool. We provide papers that can serve as advanced study guides, reference materials, or inspiration for your own work. Using our papers as your own submission without proper attribution would be academically dishonest, which we absolutely do not encourage. But we can't control what you do with our content once it's in your hands, just like a knife manufacturer can't control whether you use their product to spread butter or commit crimes against haute cuisine",
-        
-        "Yes, our papers are specifically engineered to bypass common AI detection systems. We use a sophisticated process that produces text indistinguishable from human writing—much like how certain politicians sound almost human despite evidence to the contrary. That said, we continuously update our methods as detection technology evolves. For additional security, we recommend making minor edits to further personalize the content. After all, nothing says 'definitely written by a human' like the occasional inexplicable tangent or bizarre metaphor",
-        
-        "Basic papers are typically ready within 30 minutes—less time than it takes most students to decide which procrastination technique to employ next. More complex work like Master's or PhD level content may take 1-2 hours. If you select our 'Hardcore' quality control option, add another hour as our system performs extensive verification and refinement. Still faster than reading the source material, and considerably more enjoyable than pretending to understand Derrida",
-        
-        "We offer one free revision within 24 hours of delivery, because even our sophisticated AI occasionally misunderstands briefs, much like professors misunderstand the concept of 'reasonable workload.' If you're still unhappy after the revision, we provide a 70% refund. We retain 30% to cover our operational costs and the therapy our developers need after reading thousands of academic papers. However, our satisfaction rate is over 98%, so this rarely happens—unlike your intention to start that assignment early",
-        
-        "Yes, once delivered, the content belongs to you, much like that gym membership you haven't used since January. You can use it as you see fit—reference material, learning aid, or... other academic purposes we couldn't possibly imagine. Our system generates unique content for each order, ensuring you receive original material that won't be provided to anyone else. It's exclusivity without the membership fee or secret handshake",
-        
-        "We take extensive precautions to ensure your privacy and anonymity—more security than most people use for their online banking. We don't store your papers after delivery, we use secure payment processing, and we never share your information. That said, we recommend using the papers as reference rather than submitting them directly—partly for ethical reasons, but also because professors may recognize when a student suddenly writes at a different level than usual. 'Yesterday you thought a thesis statement was a type of furniture, and today you're channeling Chomsky?' raises questions"
-    ];
-    
-    document.querySelectorAll('.faq-item').forEach((item, index) => {
-        if (index < existingFaqAnswers.length) {
-            const answerP = item.querySelector('.faq-answer p');
-            if (answerP) {
-                answerP.innerHTML = existingFaqAnswers[index];
-            }
+function getAllFAQs() {
+    return [
+        {
+            question: "What exactly is Paper Mill, and why should I care?",
+            answer: "Paper Mill is the academic equivalent of having a brilliant, caffeinated ghost writer who never sleeps, complains, or asks for more money. We use sophisticated AI to generate high-quality academic papers from minimal input: just provide a title or theme, and we'll handle the rest. It's like having a team of PhD candidates locked in your basement, except legal and without the feeding requirements. Perfect for those who appreciate the destination of knowledge far more than the journey of acquiring it.<br><br>A personal confession: I tested this system with the same topic as my bachelor thesis, a paper that took me six agonizing weeks of caffeine-fueled despair to complete. The Paper Mill version, generated in under five minutes, was not only better structured and more eloquent, but also cited sources I hadn't discovered after weeks of research. That's when I knew this wasn't just another AI tool, but academic alchemy that turns procrastination into productivity"
+        },
+        {
+            question: "Is this actually ethical, like, really?",
+            answer: "Ethics are like jazz: complex, open to interpretation, and occasionally uncomfortable at dinner parties. Our service is designed as a research and learning tool that provides sophisticated study guides and reference materials. We equip you with academic firepower; how you deploy it is between you, your conscience, and that professor who insists on scheduling papers due the Monday after spring break. We include disclaimers about academic integrity because we genuinely believe in education, we just believe convenience doesn't have to be its nemesis"
+        },
+        {
+            question: "How does your pricing work, I'm balancing student loans and a ramen budget?",
+            answer: "Our pricing reflects the culinary world: you can get the basic dish for $5, or add various gourmet touches. Higher academic levels (from bachelor to PhD) cost progressively more (+$10 to +$30), as do creativity levels (from \"sounds like a textbook\" to \"might win a Pulitzer\" at +$5 to +$25). Quality control options range from \"it'll do\" to \"hardcore academic scrutiny\" (+$10 to +$25). Unlike your streaming services, we charge per paper, no recurring subscriptions to forget about until they've funded someone's yacht. Think of it as investing in your peace of mind, delivered as a PDF and DOCX file"
+        },
+        {
+            question: "How long does it take to create my academic masterpiece?",
+            answer: "Our AI doesn't need coffee breaks, existential crises, or social media distractions. Most papers are ready within 5-10 minutes, roughly the time you spend deciding which study playlist best reflects your academic ambitions. The exact timing depends on a few factors: current AI traffic (Claude has many admirers), your selected complexity level (a sophisticated seminar paper on \"A Nietzschean Analysis of Gohan's Power Abandonment Post-Cell Games\" requires more contemplation than simpler topics), and the specific options you've chosen. It's rather like waiting for gourmet food versus fast food, except in our case, the gourmet option arrives almost as quickly. Even our most complex papers rarely take more than an hour (barring some catastrophic AI outage where the machines decide to collectively meditate). Compare that to the weeks of procrastination, panicked all-nighters, and deadline extensions you'd otherwise endure, and suddenly 10 minutes feels like time travel"
+        },
+        {
+            question: "What makes your papers special, can't I just ask ChatGPT?",
+            answer: "Asking ChatGPT to write your academic paper is like asking a kitchen knife to perform surgery: technically possible but lacking finesse and specific expertise. Our multi-stage process involves generating diverse perspectives, creating a master document, critiquing it, refining it, converting it to proper academic format, conducting peer review, and performing final quality testing. While other AI might give you text that vaguely resembles academia, we deliver papers that have been through more scrutiny than a politician's tax returns. The difference is in the details and the absence of hallucinated references"
+        },
+        {
+            question: "Will my paper pass AI detection?",
+            answer: "Our papers are designed to be indistinguishable from human writing, much like how certain politicians sound almost human despite evidence to the contrary. While Claude 3.7 Sonnet produces remarkably human-like text, we must emphasize there's no 100% guarantee in this cat-and-mouse game of AI detection. Be smart, dear customer <em>wink, wink</em> and never commit the cardinal sin of simply submitting our work verbatim. Read it. Absorb it. Make it yours with strategic edits and personal touches. This isn't just good academic practice; it's self-preservation. After all, nothing says \"definitely written by a human\" like replacing our perfectly crafted transition sentence with your characteristic run-on about how you had this epiphany while waiting for your ramen to cook at 2 AM"
+        },
+        {
+            question: "What if my paper isn't what I expected, do you offer refunds?",
+            answer: "Let's address expectations first: we deliver high-quality academic papers, not miracle cures for last-minute panic. Our sophisticated process includes rigorous internal testing for quality and that elusive \"definitely-written-by-a-sleep-deprived-human\" quality. If your paper fails our internal quality standards, you'll receive a full refund (though you won't receive the subpar paper). Beyond that, we don't offer revisions or refunds, our multi-stage AI process consumes more computational resources than your entire university's calculator budget for the 1990s. Consider it like commissioning fine art: once the creation process begins, the tokens start flowing and cannot be unclaimed. That said, our satisfaction rate exceeds 98%, which is higher than student satisfaction with both cafeteria food and 8 AM lectures combined. Most clients find our first draft surpasses what they'd produce after seventeen revisions and three existential crises"
+        },
+        {
+            question: "Who owns the paper once it's delivered?",
+            answer: "Once delivered, the content belongs entirely to you, like that exercise equipment gathering dust in your room, except potentially more useful. You receive original, unique content that won't be provided to anyone else. It's exclusivity without the velvet rope or secret handshake. Use it as reference material, learning aid, or... other academic purposes we couldn't possibly fathom. We're simply the brilliant mind behind the curtain, and once the curtain falls, the stage is yours"
+        },
+        {
+            question: "How do you handle privacy, will my professor somehow find out?",
+            answer: "Privacy is paramount, not because we have CIA-level security protocols, but because discretion is the cornerstone of our business model. We keep your information private through basic but effective measures: secure payment processing via Stripe and a \"need-to-know\" approach to data storage. Yes, we temporarily store your completed papers for delivery purposes, but everything except what's legally required for accounting is automatically purged from our systems one month after delivery, disappearing faster than your motivation after midterms. We're like that friend who knows what happened at the party but burns the evidence afterward. Your transaction and paper request remain confidential, we have zero interest in advertising \"Guess which Future Nobel Laureate used our services for their Intro to Philosophy paper!\" While we can't control if you shout our name from rooftops, we certainly won't be the ones telling your professor about our arrangement. Consider us academic ghosts: we appear, we deliver brilliance, and we vanish without a trace"
+        },
+        {
+            question: "Can I request empirical research papers with original data?",
+            answer: "Currently, we're like that friend who's brilliant at theory but avoids lab work, we focus exclusively on theoretical papers for Version 1. Our roadmap includes expanding to empirical papers in Version 2, where we'll tackle the challenge of presenting original research without actually having graduate students spend weekends gathering data. Until then, we suggest framing your needs within theoretical contexts, or as we like to say, \"embracing the power of hypothetical scenarios.\" After all, some of history's greatest thinkers never left their armchairs, why should your paper"
+        },
+        {
+            question: "What do I need to do after receiving my paper?",
+            answer: "Ah, the \"last mile\" of academic submission, we provide the brain, you provide the beauty. Our papers deliver pure intellectual content, but they arrive as academic nudists needing proper attire for your institution. You'll need to:<br><br>1. Format according to your university's exacting standards (often with LaTeX, the typesetting system designed to make simple tasks unnecessarily complex)<br>2. Add a title page with your institution's preferred arrangement of white space<br>3. Include acknowledgments thanking parents, advisors, and that one barista who kept you caffeinated<br>4. Insert headers, page numbers, and other formatting minutiae that professors scrutinize more closely than the actual content<br>5. Add footnotes where appropriate for that extra scholarly flair<br>6. Proofread and modify the content to better reflect your personal voice and knowledge<br><br>A word about references: while our quality control checks sources, no system is infallible, much like professors claiming they'll return papers \"next week.\" We strongly recommend verifying citations before submission. We know most of you won't actually do this (the same way you \"plan to start assignments early\"), but at least we've fulfilled our obligation to mention it. Consider it the academic equivalent of \"objects in mirror may be closer than they appear\", a warning that absolves us of responsibility while you speed toward your deadline"
         }
-    });
+    ];
 }
