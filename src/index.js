@@ -20,8 +20,35 @@ document.addEventListener('DOMContentLoaded', function() {
     initPricing();
     initModal();
     initTestimonials();
-    initAdditionalModals(); // Initialize the additional modals
+    initAdditionalModals(); // This now includes legal content initialization
     
     // Apply animations
     fadeInElements();
+    
+    // For easier testing in console
+    window.openLegalModal = function(type) {
+        const modalTypes = {
+            'terms': 'termsModal',
+            'privacy': 'privacyModal',
+            'imprint': 'imprintModal',
+            'integrity': 'academicIntegrityModal'
+        };
+        
+        const modalId = modalTypes[type];
+        if (!modalId) return;
+        
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Add animation class
+            setTimeout(() => {
+                const modalContainer = modal.querySelector('.modal-container');
+                if (modalContainer) {
+                    modalContainer.classList.add('modal-animate-in');
+                }
+            }, 10);
+        }
+    };
 });

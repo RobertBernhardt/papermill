@@ -1,12 +1,17 @@
 // Additional Modals Module
 // Handles contact form modal and legal modals functionality
 
+import { initLegalContent } from '../legal/legalContent.js';
+
 /**
  * Initialize the additional modals functionality
  */
 export function initAdditionalModals() {
     setupContactModal();
     setupLegalModals();
+    
+    // Initialize the legal content module after modals are set up
+    initLegalContent();
 }
 
 /**
@@ -15,6 +20,8 @@ export function initAdditionalModals() {
 function setupContactModal() {
     // Get the contact modal and its elements
     const contactModal = document.getElementById('contactModal');
+    if (!contactModal) return;
+    
     const contactModalClose = contactModal.querySelector('.modal-close');
     const contactForm = contactModal.querySelector('form');
     

@@ -1642,3 +1642,186 @@ input[type="range"]::-webkit-slider-thumb:hover {
     overflow-y: auto;
     max-height: calc(80vh - 70px); /* Subtract header height */
 }
+
+/* Simple Legal Content Styles */
+.legal-content {
+    line-height: 1.6;
+    color: var(--text);
+    font-size: 0.9rem;
+}
+
+.legal-content h1 {
+    font-size: 1.6rem;
+    color: var(--primary);
+    margin-bottom: 1.2rem;
+}
+
+.legal-content h2 {
+    font-size: 1.2rem;
+    margin-top: 1.8rem;
+    margin-bottom: 0.8rem;
+    color: var(--primary);
+}
+
+.legal-content h3 {
+    font-size: 1rem;
+    margin-top: 1.2rem;
+    margin-bottom: 0.6rem;
+    color: var(--primary);
+}
+
+.legal-content p {
+    margin-bottom: 1rem;
+}
+
+.legal-content ul, .legal-content ol {
+    margin-bottom: 1.2rem;
+    padding-left: 1.5rem;
+}
+
+.legal-content li {
+    margin-bottom: 0.4rem;
+}
+
+.legal-content hr {
+    border: 0;
+    height: 1px;
+    background-color: var(--border);
+    margin: 1.5rem 0;
+}
+
+.legal-content a {
+    color: var(--primary);
+    text-decoration: underline;
+}
+
+.legal-content a:hover {
+    color: var(--secondary);
+}
+
+.legal-content .last-updated {
+    color: var(--light-text);
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Make legal modals taller */
+#termsModal .modal-container,
+#privacyModal .modal-container,
+#imprintModal .modal-container,
+#academicIntegrityModal .modal-container {
+    max-height: 80vh;
+}
+
+/* Make sure modal body takes the available space for scrolling */
+#termsModal .modal-body,
+#privacyModal .modal-body,
+#imprintModal .modal-body,
+#academicIntegrityModal .modal-body {
+    overflow-y: auto;
+    max-height: calc(80vh - 70px); /* Subtract header height */
+    position: relative; /* For absolute positioning of scroll button */
+}
+
+/* Table of Contents Styles */
+.legal-toc {
+    background-color: #f5f5f5;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+}
+
+.legal-toc p {
+    margin-bottom: 0.5rem;
+}
+
+.legal-toc ul {
+    margin-bottom: 0;
+    padding-left: 1.2rem;
+    columns: 2;
+}
+
+.legal-toc li {
+    margin-bottom: 0.4rem;
+    break-inside: avoid;
+    font-size: 0.85rem;
+}
+
+.legal-toc a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.legal-toc a:hover {
+    text-decoration: underline;
+}
+
+/* Scroll to top button */
+.scroll-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 36px;
+    height: 36px;
+    background-color: #eee;
+    color: var(--primary);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.7;
+    font-size: 1.2rem;
+    border: 1px solid #ddd;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.2s ease;
+}
+
+.scroll-to-top:hover {
+    opacity: 1;
+}
+
+/* Responsive adjustments for legal content */
+@media (max-width: 768px) {
+    .legal-toc ul {
+        columns: 1;
+    }
+}
+
+/* Print styles for legal documents */
+@media print {
+    .legal-content {
+        font-size: 10pt;
+        line-height: 1.4;
+    }
+    
+    .legal-content h1 {
+        font-size: 16pt;
+    }
+    
+    .legal-content h2 {
+        font-size: 14pt;
+    }
+    
+    .legal-content h3 {
+        font-size: 12pt;
+    }
+    
+    .legal-toc, .scroll-to-top {
+        display: none !important;
+    }
+    
+    .modal-header, .modal-close {
+        display: none;
+    }
+    
+    .modal-body {
+        padding: 0;
+    }
+    
+    .modal-container {
+        box-shadow: none;
+    }
+}
