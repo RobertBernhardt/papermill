@@ -87,7 +87,6 @@ function setupLegalModals() {
     const termsModal = document.getElementById('termsModal');
     const privacyModal = document.getElementById('privacyModal');
     const imprintModal = document.getElementById('imprintModal');
-    const academicIntegrityModal = document.getElementById('academicIntegrityModal');
     
     // Set up event listeners for terms modal
     setupLegalModal(termsModal, '[data-modal="terms"]');
@@ -97,9 +96,6 @@ function setupLegalModals() {
     
     // Set up event listeners for imprint modal
     setupLegalModal(imprintModal, '[data-modal="imprint"]');
-    
-    // Set up event listeners for academic integrity modal
-    setupLegalModal(academicIntegrityModal, '[data-modal="integrity"]');
 }
 
 /**
