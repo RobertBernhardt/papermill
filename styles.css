@@ -2338,3 +2338,689 @@ input[type="email"] {
         font-size: 0.85rem;
     }
 }
+/* Paper Wizard Animation Styles - Improved */
+
+.paper-wizard-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    background-color: rgba(250, 250, 250, 0.7);
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+  
+  .wizard-animation-scene {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+  
+  /* Student Character */
+  .student-character {
+    position: absolute;
+    bottom: 50px;
+    left: 40px;
+    width: 50px;
+    height: 90px;
+    z-index: 20;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  .wizard-animation-scene.show-student .student-character {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  .student-head {
+    width: 28px;
+    height: 28px;
+    background-color: #F8D9C8;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 11px;
+    border: 2px solid var(--primary);
+    z-index: 2;
+  }
+  
+  .student-face {
+    position: absolute;
+    width: 14px;
+    height: 10px;
+    top: 14px;
+    left: 7px;
+    transition: all 0.3s ease;
+  }
+  
+  .student-face.sad {
+    border-top: 2px solid rgba(0, 0, 0, 0.4);
+    border-radius: 50% 50% 0 0;
+  }
+  
+  .student-face.happy {
+    border-bottom: 2px solid rgba(0, 0, 0, 0.4);
+    border-radius: 0 0 50% 50%;
+    top: 11px; /* Moved up so the smile is more visible */
+  }
+  
+  .student-body {
+    width: 35px;
+    height: 45px;
+    background-color: var(--accent);
+    border-radius: 8px;
+    position: absolute;
+    top: 25px;
+    left: 8px;
+    z-index: 1;
+  }
+  
+  .thought-bubble {
+    position: absolute;
+    top: -40px;
+    left: -15px;
+    background-color: white;
+    border-radius: 12px;
+    padding: 8px 12px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.4s ease;
+  }
+  
+  .thought-bubble:after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 15px;
+    width: 12px;
+    height: 12px;
+    background-color: white;
+    transform: rotate(45deg);
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.05);
+  }
+  
+  .wizard-animation-scene.show-student .thought-bubble {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  .thought-text {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--primary);
+    white-space: nowrap;
+  }
+  
+  /* Wizard Character */
+  .wizard-character {
+    position: absolute;
+    bottom: 40px;
+    right: 50px;
+    width: 60px;
+    height: 110px;
+    z-index: 15;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  .wizard-animation-scene.show-wizard .wizard-character {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  .wizard-animation-scene.wizard-casting .wizard-character {
+    animation: wizard-cast-spell 1s ease infinite alternate;
+  }
+  
+  @keyframes wizard-cast-spell {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(-5px) rotate(3deg); }
+  }
+  
+  .wizard-hat {
+    width: 36px;
+    height: 36px;
+    background-color: var(--secondary);
+    border-radius: 50% 50% 0 0;
+    position: absolute;
+    top: 0;
+    left: 12px;
+    transform: rotate(-15deg);
+    z-index: 3;
+  }
+  
+  .wizard-hat:before {
+    content: '★';
+    position: absolute;
+    top: 5px;
+    left: 15px;
+    color: var(--accent);
+    font-size: 15px;
+  }
+  
+  .wizard-head {
+    width: 28px;
+    height: 28px;
+    background-color: #F8D9C8;
+    border-radius: 50%;
+    position: absolute;
+    top: 20px;
+    left: 16px;
+    border: 2px solid var(--primary);
+    z-index: 2;
+  }
+  
+  .wizard-face {
+    position: absolute;
+    width: 14px;
+    height: 3px;
+    background-color: transparent;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.4);
+    top: 15px;
+    left: 7px;
+    border-radius: 0 0 50% 50%;
+  }
+  
+  .wizard-beard {
+    width: 30px;
+    height: 25px;
+    background-color: #CCCCCC;
+    border-radius: 0 0 50% 50%;
+    position: absolute;
+    top: 40px;
+    left: 14px;
+    z-index: 1;
+  }
+  
+  .wizard-body {
+    width: 40px;
+    height: 50px;
+    background-color: var(--primary);
+    border-radius: 8px;
+    position: absolute;
+    top: 55px;
+    left: 10px;
+  }
+  
+  .wizard-wand {
+    width: 40px;
+    height: 3px;
+    background-color: #804019;
+    position: absolute;
+    top: 60px;
+    left: -15px;
+    transform: rotate(-20deg);
+    transform-origin: right center;
+    transition: transform 0.3s ease;
+  }
+  
+  .wizard-wand:before {
+    content: '✦';
+    position: absolute;
+    left: -5px;
+    top: -8px;
+    color: var(--accent);
+    font-size: 15px;
+  }
+  
+  .wizard-animation-scene.wizard-casting .wizard-wand {
+    transform: rotate(-45deg);
+    animation: wand-glow 0.5s ease infinite alternate;
+  }
+  
+  @keyframes wand-glow {
+    from { box-shadow: 0 0 5px var(--accent); }
+    to { box-shadow: 0 0 15px var(--accent), 0 0 20px var(--secondary); }
+  }
+  
+  /* Topic Card */
+  .topic-card {
+    position: absolute;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.8);
+    background-color: white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    width: 270px;
+    max-width: 80%;
+    z-index: 30;
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  
+  .wizard-animation-scene.show-topic .topic-card {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+  
+  /* Hide topic card when output paper is shown */
+  .wizard-animation-scene.show-output .topic-card {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.8);
+    pointer-events: none;
+  }
+  
+  .topic-prompt {
+    color: var(--secondary);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  
+  .topic-text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    color: var(--primary);
+    min-height: 20px;
+    width: 100%;
+    word-wrap: break-word;
+    display: inline;
+    line-height: 1.4;
+  }
+  
+  .topic-cursor {
+    display: inline-block;
+    width: 1px; /* Reduced from 2px to fix the double line issue */
+    height: 18px;
+    background-color: var(--primary);
+    animation: blink-cursor 0.8s infinite;
+    vertical-align: middle;
+    margin-left: 2px;
+  }
+  
+  @keyframes blink-cursor {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  
+  /* Magic Particles */
+  .magic-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 25;
+  }
+  
+  .wizard-animation-scene.show-magic .magic-particles {
+    opacity: 1;
+  }
+  
+  .magic-particles:before {
+    content: '';
+    position: absolute;
+    top: 120px;
+    left: 50%;
+    width: 2px;
+    height: 2px;
+    background-color: var(--accent);
+    box-shadow: 
+      0 0 15px 15px var(--accent),
+      20px 40px 2px var(--secondary),
+      -30px 60px 3px var(--primary),
+      50px 30px 2px var(--accent),
+      -20px -20px 4px var(--secondary),
+      40px -30px 3px var(--primary),
+      -40px 20px 2px var(--accent),
+      30px 70px 4px var(--secondary),
+      -50px -40px 3px var(--primary),
+      60px -60px 4px var(--accent),
+      -70px 70px 5px var(--secondary),
+      80px 50px 3px var(--primary);
+    animation: magic-float 2s ease infinite;
+  }
+  
+  @keyframes magic-float {
+    0%, 100% { transform: translate(-50%, 0) scale(1); }
+    50% { transform: translate(-50%, -10px) scale(1.1); }
+  }
+  
+  /* Output Paper */
+  .output-paper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.6) rotate(-5deg);
+    width: 240px;
+    max-width: 80%;
+    height: 200px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    padding: 15px;
+    opacity: 0;
+    transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 25;
+  }
+  
+  .wizard-animation-scene.show-output .output-paper {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+  
+  .paper-content {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .paper-header {
+    height: 10px;
+    width: 70%;
+    background-color: rgba(26, 54, 93, 0.1);
+    border-radius: 3px;
+    margin-bottom: 10px;
+  }
+  
+  .paper-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--primary);
+    background-color: rgba(126, 87, 194, 0.1);
+    border-radius: 3px;
+    padding: 8px;
+    margin-bottom: 12px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.4;
+    word-wrap: break-word;
+  }
+  
+  .paper-lines {
+    margin-top: 10px;
+  }
+  
+  .paper-line {
+    height: 6px;
+    background-color: rgba(26, 54, 93, 0.05);
+    margin-bottom: 8px;
+    border-radius: 3px;
+  }
+  
+  .paper-line:nth-child(1) { width: 90%; }
+  .paper-line:nth-child(2) { width: 85%; }
+  .paper-line:nth-child(3) { width: 95%; }
+  .paper-line:nth-child(4) { width: 80%; }
+  .paper-line:nth-child(5) { width: 88%; }
+  .paper-line:nth-child(6) { width: 92%; }
+  
+  .paper-section-title {
+    height: 8px;
+    width: 50%;
+    background-color: rgba(126, 87, 194, 0.15);
+    border-radius: 3px;
+    margin: 12px 0 8px;
+  }
+  
+  .paper-line:nth-child(8) { width: 85%; }
+  .paper-line:nth-child(9) { width: 90%; }
+  .paper-line:nth-child(10) { width: 80%; }
+  
+  .paper-references {
+    margin-top: 12px;
+    height: 25px;
+    position: relative;
+  }
+  
+  .paper-references:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60%;
+    height: 7px;
+    background-color: rgba(26, 54, 93, 0.1);
+    border-radius: 3px;
+  }
+  
+  .paper-references:after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 0;
+    width: 90%;
+    height: 5px;
+    background-color: rgba(26, 54, 93, 0.05);
+    border-radius: 3px;
+  }
+  
+  .paper-grade {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 209, 102, 0.2);
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--secondary);
+    transform: rotate(15deg);
+  }
+  
+  /* Coffee Cup - Initially visible with student */
+  .coffee-cup {
+    position: absolute;
+    bottom: -5px;
+    right: -10px;
+    width: 16px;
+    height: 20px;
+    z-index: 5;
+    transition: all 0.3s ease;
+  }
+  
+  .cup-body {
+    width: 16px;
+    height: 20px;
+    background-color: #8B572A;
+    border-radius: 0 0 3px 3px;
+    position: relative;
+  }
+  
+  .cup-body:before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: 0;
+    width: 16px;
+    height: 3px;
+    background-color: #C19A6B;
+    border-radius: 3px 3px 0 0;
+  }
+  
+  .cup-handle {
+    position: absolute;
+    top: 5px;
+    right: -6px;
+    width: 6px;
+    height: 8px;
+    border: 1.5px solid #8B572A;
+    border-left: none;
+    border-radius: 0 6px 6px 0;
+  }
+  
+  .cup-steam {
+    position: absolute;
+    top: -8px;
+    left: 4px;
+    width: 2px;
+    height: 8px;
+  }
+  
+  .cup-steam:before, .cup-steam:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    width: 5px;
+    height: 5px;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    animation: steam-rise 2s ease-out infinite;
+  }
+  
+  .cup-steam:before {
+    left: -3px;
+    animation-delay: 0.3s;
+  }
+  
+  .cup-steam:after {
+    left: 2px;
+    top: -3px;
+  }
+  
+  @keyframes steam-rise {
+    0% {
+      transform: translateY(0) scale(0.5);
+      opacity: 0;
+    }
+    20% {
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(-10px) scale(1.2);
+      opacity: 0;
+    }
+  }
+  
+  /* Hide coffee cup when showing beer */
+  .wizard-animation-scene.show-beer .coffee-cup {
+    opacity: 0;
+    transform: scale(0);
+  }
+  
+  /* Beer Mug - Appears when paper is complete */
+  .beer-mug {
+    position: absolute;
+    bottom: 60px;
+    left: 75px;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 30;
+  }
+  
+  .wizard-animation-scene.show-beer .beer-mug {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  .mug-body {
+    width: 22px;
+    height: 25px;
+    background-color: rgba(255, 209, 102, 0.6);
+    background-image: linear-gradient(
+      to bottom,
+      rgba(255, 209, 102, 0.9) 0%,
+      rgba(240, 180, 80, 0.9) 100%
+    );
+    border: 2px solid #DBA237;
+    border-radius: 0 0 5px 5px;
+    position: relative;
+  }
+  
+  .mug-handle {
+    position: absolute;
+    top: 7px;
+    right: -10px;
+    width: 10px;
+    height: 12px;
+    border: 2px solid #DBA237;
+    border-left: none;
+    border-radius: 0 10px 10px 0;
+  }
+  
+  .mug-foam {
+    position: absolute;
+    top: -5px;
+    left: 0;
+    width: 22px;
+    height: 7px;
+    background-color: white;
+    border-radius: 5px 5px 0 0;
+  }
+  
+  .mug-foam:before, .mug-foam:after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    width: 8px;
+    height: 6px;
+    background-color: white;
+    border-radius: 50% 50% 0 0;
+  }
+  
+  .mug-foam:before {
+    left: 3px;
+  }
+  
+  .mug-foam:after {
+    right: 3px;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .paper-title {
+      font-size: 10px;
+    }
+    
+    .topic-card {
+      width: 220px;
+    }
+    
+    .topic-prompt, .topic-text {
+      font-size: 12px;
+    }
+    
+    .student-character {
+      left: 30px;
+      transform: scale(0.9);
+    }
+    
+    .wizard-character {
+      right: 30px;
+      transform: scale(0.9);
+    }
+    
+    .output-paper {
+      width: 220px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .paper-title {
+      font-size: 9px;
+      min-height: 35px;
+      padding: 6px;
+    }
+    
+    .output-paper {
+      width: 200px;
+      height: 180px;
+    }
+    
+    .topic-card {
+      width: 180px;
+    }
+  }

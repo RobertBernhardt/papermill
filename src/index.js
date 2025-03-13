@@ -10,6 +10,7 @@ import { initEnhancedForm } from './components/modal/formInitializer.js';
 import { initAdditionalModals } from './components/modal/additionalModals.js';
 import { initTestimonials } from './components/testimonials/testimonials.js';
 import { fadeInElements } from './utils/animations.js';
+import { initPaperWizardAnimation } from './components/animations/paperWizardAnimation.js';
 
 // Initialize the application when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
@@ -23,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initModal();
     initTestimonials();
     initAdditionalModals(); // This now includes legal content initialization
+    initPaperWizardAnimation();
     
     // Apply animations
     fadeInElements();
