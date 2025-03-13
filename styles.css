@@ -3024,3 +3024,206 @@ input[type="email"] {
       width: 180px;
     }
   }
+ /* Replace the existing .example-papers CSS with this grid layout */
+.example-papers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+/* Make examples clickable with hover effect */
+.example-paper {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.example-paper::after {
+    content: "Click to Read More";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 70%, rgba(255, 255, 255, 0) 100%);
+    color: var(--secondary);
+    font-weight: 600;
+    text-align: center;
+    padding: 30px 0 15px;
+    font-size: 0.85rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.example-paper:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.example-paper:hover::after {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.example-paper h3 {
+    font-size: 1.2rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+.paper-meta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.paper-meta span {
+    background-color: rgba(26, 54, 93, 0.1);
+    color: var(--primary);
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.paper-excerpt {
+    margin-bottom: 1.5rem;
+    max-height: 150px;
+    overflow: hidden;
+    position: relative;
+    flex-grow: 1;
+}
+
+.paper-excerpt p {
+    font-size: 0.95rem;
+    color: var(--light-text);
+    line-height: 1.6;
+}
+
+.quality-score {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: auto;
+}
+
+.score {
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.score-bar {
+    flex: 1;
+    height: 6px;
+    background-color: rgba(26, 54, 93, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.score-fill {
+    height: 100%;
+    background-color: var(--secondary);
+    border-radius: 3px;
+}
+
+/* Animation for newly loaded examples */
+@keyframes exampleFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 991px) {
+    .example-papers-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 767px) {
+    .example-papers-grid {
+        grid-template-columns: 1fr;
+    }
+}
+/* Fix for modal navigation layout */
+.paper-preview {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.preview-cta {
+    margin: 0 auto;
+    display: inline-block;
+}
+
+/* Redesigned modal navigation */
+.modal-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    position: relative;
+}
+
+/* Previous button aligned left */
+.nav-button.prev {
+    margin-right: auto;
+}
+
+/* Next button aligned right */
+.nav-button.next {
+    margin-left: auto;
+}
+
+/* Make buttons more visible */
+.nav-button {
+    background-color: #f5f5f5;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-button:hover:not(:disabled) {
+    background-color: var(--secondary);
+    color: white;
+    border-color: var(--secondary);
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+    .modal-navigation {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .nav-button {
+        padding: 0.8rem 1.2rem;
+    }
+}

@@ -11,6 +11,8 @@ import { initAdditionalModals } from './components/modal/additionalModals.js';
 import { initTestimonials } from './components/testimonials/testimonials.js';
 import { fadeInElements } from './utils/animations.js';
 import { initPaperWizardAnimation } from './components/animations/paperWizardAnimation.js';
+import { initExamples } from './components/examples/examples.js';
+import { initExampleModal } from './components/examples/exampleModal.js';
 
 // Initialize the application when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
@@ -25,6 +27,10 @@ document.addEventListener('DOMContentLoaded', function() {
     initTestimonials();
     initAdditionalModals(); // This now includes legal content initialization
     initPaperWizardAnimation();
+    
+    // Initialize our new examples components
+    initExampleModal(); // Initialize the modal first
+    initExamples();     // Then initialize the examples
     
     // Apply animations
     fadeInElements();
@@ -54,5 +60,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }, 10);
         }
+    };
+    
+    // Add helper for opening example modals
+    window.openExampleModal = function(exampleId) {
+        // Import dynamically to avoid circular dependencies
+        import('./components/examples/exampleModal.js').then(module => {
+            module.openExampleModal(exampleId);
+        });
     };
 });
