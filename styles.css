@@ -1091,17 +1091,6 @@ section:nth-child(even)::before {
     color: var(--accent);
 }
 
-.footer-bottom {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 1.5rem;
-    text-align: center;
-}
-
-.footer-bottom p {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.5);
-}
-
 /* "Nothing succeeds like excess." - Mobile views shall succeed with restraint instead. */
 @media (max-width: 991px) {
     .process-steps {
@@ -2039,5 +2028,313 @@ input[type="range"]::-webkit-slider-thumb:hover {
     
     .signature-name {
         padding-left: 1.5rem;
+    }
+}
+/* Moderately reduce vertical spacing in the form (50% reduction) */
+.paper-form .form-group {
+    margin-bottom: 10px;
+}
+
+/* Remove excess padding from form elements but keep enough spacing */
+.paper-form label {
+    margin-bottom: 4px;
+}
+
+/* Slightly compress the form vertical spacing */
+.paper-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Expandable Fields in Form */
+.expandable-field {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    margin-top: 0;
+}
+
+.expandable-field.expanded {
+    max-height: 500px;
+    opacity: 1;
+    transform: translateY(0);
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+/* Optional field groups */
+.optional-field-group {
+    margin-bottom: 6px;
+}
+
+/* Expand button styles - left aligned, moderate spacing */
+.expand-field-button {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: var(--secondary);
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 3px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0;
+    text-align: left;
+    width: auto;
+}
+
+.expand-field-button:hover {
+    color: var(--primary);
+    transform: translateX(3px);
+}
+
+.plus-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background-color: var(--secondary);
+    color: white;
+    border-radius: 50%;
+    margin-right: 8px;
+    font-size: 14px;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.expand-field-button:hover .plus-icon {
+    transform: rotate(90deg);
+    background-color: var(--primary);
+}
+
+/* Paper topic textarea styling */
+.paper-topic-textarea {
+    width: 100%;
+    resize: none;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    line-height: 1.4;
+    min-height: 60px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #f9fafc;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.paper-topic-textarea:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(126, 87, 194, 0.15);
+    outline: none;
+    background-color: white;
+}
+
+.paper-topic-group {
+    margin-bottom: 7px;
+}
+
+/* Character counter */
+.char-counter {
+    font-size: 0.8rem;
+    color: var(--light-text);
+    text-align: right;
+    margin-top: 2px;
+}
+
+.char-count-warning {
+    color: #e74c3c;
+    font-weight: 600;
+}
+
+/* Make tax notice consistent with ToS text */
+.tax-notice {
+    font-size: 0.85rem;
+    color: var(--light-text);
+    text-align: center;
+    margin-top: 5px;
+    padding-top: 5px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    font-style: normal;
+}
+
+/* Form disclaimer and tax notice consistent styling */
+.form-disclaimer,
+.tax-notice {
+    font-size: 0.85rem;
+    color: var(--light-text);
+    text-align: center;
+    line-height: 1.5;
+}
+
+.form-disclaimer {
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+/* Secondary label styling */
+.secondary-label {
+    color: var(--secondary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 3px;
+    display: block;
+}
+
+/* Focus field styling */
+.focus-textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #f9fafc;
+    line-height: 1.4;
+    margin-bottom: 0;
+}
+
+.focus-textarea:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(126, 87, 194, 0.15);
+    outline: none;
+    background-color: white;
+}
+
+/* Additional suggestions styling */
+.suggestions-textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 70px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #f9fafc;
+    line-height: 1.4;
+    margin-bottom: 0;
+}
+
+.suggestions-textarea:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(126, 87, 194, 0.15);
+    outline: none;
+    background-color: white;
+}
+
+/* Improve textarea styling */
+textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #f9fafc;
+}
+
+textarea:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(126, 87, 194, 0.15);
+    outline: none;
+    background-color: white;
+}
+
+/* Compress radio buttons and options with moderate spacing */
+.radio-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.radio-label {
+    margin: 0;
+    padding: 4px 0;
+}
+
+/* Moderate spacing in creativity slider */
+.creativity-slider {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.slider-labels {
+    margin-top: 4px;
+}
+
+/* Compress pricing area - moderately */
+.pricing-summary {
+    margin-top: 10px;
+    padding: 12px;
+}
+
+.price-row {
+    margin-bottom: 3px;
+}
+
+.price-divider {
+    margin: 4px 0;
+}
+
+/* Ensure buttons have enough clickable area */
+.cta-button.full-width {
+    margin-top: 12px;
+    padding: 12px;
+}
+
+/* Select fields */
+select {
+    padding: 10px 12px !important;
+}
+
+/* Email field */
+input[type="email"] {
+    padding: 10px 12px !important;
+}
+
+/* Add a subtle animation to newly visible fields */
+@keyframes fieldAppear {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.expandable-field.expanded label,
+.expandable-field.expanded input,
+.expandable-field.expanded textarea {
+    animation: fieldAppear 0.5s ease forwards;
+}
+
+/* Placeholder text adjustments */
+::placeholder {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    opacity: 0.8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .expand-field-button {
+        font-size: 0.9rem;
+    }
+    
+    .paper-topic-textarea {
+        font-size: 0.9rem;
+    }
+    
+    .focus-textarea,
+    .suggestions-textarea {
+        font-size: 0.85rem;
     }
 }

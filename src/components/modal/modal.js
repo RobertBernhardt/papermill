@@ -2,6 +2,7 @@
 // Handles the paper form modal functionality
 
 import { getSelectedPricingOptions, resetPricingOptions } from '../pricing/pricing.js';
+import { getPaperTopicSuggestion, getPaperFocusSuggestion, getAdditionalSuggestion } from '../suggestions/suggestions.js';
 
 // Price configurations
 const paperTypePrices = {
@@ -87,6 +88,9 @@ export function initModal() {
     // Set up form input listeners
     setupFormInputListeners(modal);
     
+    // Set up expand buttons for additional fields
+    setupExpandableFields();
+    
     // Handle form submission
     setupFormSubmission(paperForm, modal);
 }
@@ -103,11 +107,17 @@ function openModal(modal, paperForm) {
     // Reset form first
     paperForm.reset();
     
+    // Reset expandable fields
+    resetExpandableFields();
+    
     // Apply selected options from pricing section
     applySelectedPricingOptions();
     
     // Update pricing in the modal
     updateModalPrices();
+    
+    // Set initial placeholder for main topic based on empty discipline
+    updateTopicPlaceholder('');
     
     // Focus on first input
     setTimeout(() => {
@@ -178,6 +188,121 @@ function setupFormInputListeners(modal) {
     
     // Set initial slider label highlight
     updateCreativitySliderLabels(1);
+    
+    // Update topic placeholder when discipline changes
+    const disciplineSelect = document.getElementById('academic-discipline');
+    disciplineSelect.addEventListener('change', function() {
+        updateTopicPlaceholder(this.value);
+        updateFocusPlaceholder(this.value);
+        updateAdditionalPlaceholder(this.value);
+    });
+}
+
+/**
+ * Update the placeholder text for the paper topic field based on selected discipline
+ * @param {string} discipline - The selected academic discipline
+ */
+function updateTopicPlaceholder(discipline) {
+    const topicTextarea = document.getElementById('paper-topic');
+    if (topicTextarea) {
+        topicTextarea.placeholder = getPaperTopicSuggestion(discipline);
+        
+        // Auto-resize to fit new placeholder text
+        setTimeout(() => {
+            // Reset height to auto
+            topicTextarea.style.height = 'auto';
+            
+            // Set height based on scrollHeight
+            topicTextarea.style.height = Math.max(60, topicTextarea.scrollHeight) + 'px';
+        }, 10);
+    }
+}
+
+/**
+ * Update the placeholder text for the paper focus field based on selected discipline
+ * @param {string} discipline - The selected academic discipline
+ */
+function updateFocusPlaceholder(discipline) {
+    const focusInput = document.getElementById('paper-focus');
+    if (focusInput) {
+        focusInput.placeholder = getPaperFocusSuggestion(discipline);
+    }
+}
+
+/**
+ * Update the placeholder text for the additional suggestions field based on selected discipline
+ * @param {string} discipline - The selected academic discipline
+ */
+function updateAdditionalPlaceholder(discipline) {
+    const additionalInput = document.getElementById('additional-suggestions');
+    if (additionalInput) {
+        additionalInput.placeholder = getAdditionalSuggestion(discipline);
+    }
+}
+
+/**
+ * Set up expandable fields that appear when a button is clicked
+ */
+function setupExpandableFields() {
+    // Focus field expand button
+    const focusExpandBtn = document.getElementById('expand-focus');
+    const focusField = document.getElementById('focus-field-container');
+    
+    if (focusExpandBtn && focusField) {
+        focusExpandBtn.addEventListener('click', function() {
+            focusField.classList.add('expanded');
+            this.style.display = 'none';
+            
+            // Update placeholder based on current discipline
+            const discipline = document.getElementById('academic-discipline').value;
+            updateFocusPlaceholder(discipline);
+            
+            // Focus the input after expanding
+            setTimeout(() => {
+                document.getElementById('paper-focus').focus();
+            }, 300);
+        });
+    }
+    
+    // Additional suggestions expand button
+    const additionalExpandBtn = document.getElementById('expand-additional');
+    const additionalField = document.getElementById('additional-field-container');
+    
+    if (additionalExpandBtn && additionalField) {
+        additionalExpandBtn.addEventListener('click', function() {
+            additionalField.classList.add('expanded');
+            this.style.display = 'none';
+            
+            // Update placeholder based on current discipline
+            const discipline = document.getElementById('academic-discipline').value;
+            updateAdditionalPlaceholder(discipline);
+            
+            // Focus the textarea after expanding
+            setTimeout(() => {
+                document.getElementById('additional-suggestions').focus();
+            }, 300);
+        });
+    }
+}
+
+/**
+ * Reset expandable fields to collapsed state
+ */
+function resetExpandableFields() {
+    const focusField = document.getElementById('focus-field-container');
+    const focusExpandBtn = document.getElementById('expand-focus');
+    const additionalField = document.getElementById('additional-field-container');
+    const additionalExpandBtn = document.getElementById('expand-additional');
+    
+    if (focusField && focusExpandBtn) {
+        focusField.classList.remove('expanded');
+        focusExpandBtn.style.display = 'block';
+    }
+    
+    if (additionalField && additionalExpandBtn) {
+        additionalField.classList.remove('expanded');
+        additionalExpandBtn.style.display = 'block';
+    }
 }
 
 /**
@@ -248,6 +373,10 @@ function setupFormSubmission(paperForm, modal) {
         const qualityControl = document.querySelector('input[name="quality-control"]:checked').value;
         const email = document.getElementById('email').value;
         
+        // Get optional fields if they exist
+        const paperFocus = document.getElementById('paper-focus')?.value || '';
+        const additionalSuggestions = document.getElementById('additional-suggestions')?.value || '';
+        
         // Simulate form submission
         const submitButton = paperForm.querySelector('button[type="submit"]');
         const originalText = submitButton.textContent;
@@ -264,7 +393,9 @@ function setupFormSubmission(paperForm, modal) {
                 type: paperType,
                 creativityLevel: creativityLevel,
                 qualityControl: qualityControl,
-                email: email
+                email: email,
+                focus: paperFocus,
+                additionalSuggestions: additionalSuggestions
             });
             
             // Reset button

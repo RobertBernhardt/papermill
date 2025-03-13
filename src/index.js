@@ -6,6 +6,7 @@ import { initHeader } from './components/header/header.js';
 import { initFAQ } from './components/faq/faq.js';
 import { initPricing } from './components/pricing/pricing.js';
 import { initModal } from './components/modal/modal.js';
+import { initEnhancedForm } from './components/modal/formInitializer.js';
 import { initAdditionalModals } from './components/modal/additionalModals.js';
 import { initTestimonials } from './components/testimonials/testimonials.js';
 import { fadeInElements } from './utils/animations.js';
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initHeader();
     initFAQ();
     initPricing();
+    initEnhancedForm(); // Initialize the enhanced form before the modal
     initModal();
     initTestimonials();
     initAdditionalModals(); // This now includes legal content initialization

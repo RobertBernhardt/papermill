@@ -174,7 +174,7 @@ function getAllFAQs() {
         },
         {
             question: "Can I request empirical research papers with original data?",
-            answer: "Currently, we're like that friend who's brilliant at theory but avoids lab work, we focus exclusively on theoretical papers for Version 1. Our roadmap includes expanding to empirical papers in Version 2, where we'll tackle the challenge of presenting original research without actually having graduate students spend weekends gathering data. Until then, we suggest framing your needs within theoretical contexts, or as we like to say, \"embracing the power of hypothetical scenarios.\" After all, some of history's greatest thinkers never left their armchairs, why should your paper"
+            answer: "Currently, we're the academic equivalent of an armchair philosopher - brilliant with theories but nowhere to be found when it's time to collect field samples. For Version 1, we stick exclusively to theoretical papers. Our roadmap includes expanding to empirical research in Version 2, when we'll master the art of presenting original findings without actually sending research assistants into the wild with clipboards. Until then, we recommend framing your needs within theoretical frameworks, or as we call it, \"harnessing the untapped potential of thought experiments.\" Remember, Einstein developed relativity without a particle accelerator - your paper can be just as groundbreaking from the comfort of your desk"
         },
         {
             question: "What do I need to do after receiving my paper?",
