@@ -413,3 +413,95 @@ function setupFormSubmission(paperForm, modal) {
         }, 2000);
     });
 }
+
+/**
+ * Send form data to the backend API
+ * @param {Object} formData - The form data to send
+ * @returns {Promise} - A promise that resolves with the API response
+ */
+async function sendPaperRequest(formData) {
+    try {
+      const response = await fetch('http://localhost:3000/api/papers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error sending paper request:', error);
+      throw error; // Re-throw for handling in the calling function
+    }
+  }
+  
+  // Update the setupFormSubmission function to use the API
+  function setupFormSubmission(paperForm, modal) {
+    paperForm.addEventListener('submit', async function(event) {
+      event.preventDefault();
+      
+      // Get form values
+      const paperTopic = document.getElementById('paper-topic').value;
+      const academicDiscipline = document.getElementById('academic-discipline').value;
+      const paperType = document.querySelector('input[name="paper-type"]:checked').value;
+      const creativityLevel = document.getElementById('creativity-level').value;
+      const qualityControl = document.querySelector('input[name="quality-control"]:checked').value;
+      const email = document.getElementById('email').value;
+      
+      // Get optional fields if they exist
+      const paperFocus = document.getElementById('paper-focus')?.value || '';
+      const additionalSuggestions = document.getElementById('additional-suggestions')?.value || '';
+      
+      // Prepare the request data
+      const requestData = {
+        paperTopic,
+        academicDiscipline,
+        paperType,
+        creativityLevel,
+        qualityControl,
+        email,
+        paperFocus,
+        additionalSuggestions
+      };
+      
+      // Update UI to show we're processing
+      const submitButton = paperForm.querySelector('button[type="submit"]');
+      const originalText = submitButton.textContent;
+      submitButton.textContent = 'Processing...';
+      submitButton.disabled = true;
+      
+      try {
+        // Send the request to the API
+        const response = await sendPaperRequest(requestData);
+        
+        // Success handling
+        submitButton.textContent = 'Success! Redirecting...';
+        console.log('Paper request successful:', response);
+        
+        // Close modal after delay
+        setTimeout(() => {
+          closeModal(modal);
+          // Reset button text after modal is closed
+          setTimeout(() => {
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+          }, 500);
+        }, 1500);
+        
+      } catch (error) {
+        // Error handling
+        submitButton.textContent = 'Error! Please try again';
+        setTimeout(() => {
+          submitButton.textContent = originalText;
+          submitButton.disabled = false;
+        }, 2000);
+        
+        console.error('Failed to submit paper request:', error);
+      }
+    });
+  }
