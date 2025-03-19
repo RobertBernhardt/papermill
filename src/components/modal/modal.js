@@ -49,8 +49,18 @@ const qualityControlMapping = {
  */
 export function initModal() {
     const modal = document.getElementById('paperFormModal');
+    if (!modal) {
+        console.error('Paper form modal not found in the DOM');
+        return;
+    }
+    
     const modalClose = modal.querySelector('.modal-close');
     const paperForm = modal.querySelector('.paper-form');
+    
+    if (!modalClose || !paperForm) {
+        console.error('Required modal elements not found');
+        return;
+    }
     
     // Add event listeners to pricing section CTA button
     const pricingCTA = document.querySelector('.pricing-cta .cta-button');
@@ -101,6 +111,8 @@ export function initModal() {
  * @param {HTMLElement} paperForm - The paper form element
  */
 function openModal(modal, paperForm) {
+    if (!modal || !paperForm) return;
+    
     modal.classList.add('active');
     document.body.style.overflow = 'hidden'; // Prevent scrolling behind modal
     
@@ -121,7 +133,7 @@ function openModal(modal, paperForm) {
     
     // Focus on first input
     setTimeout(() => {
-        const firstInput = modal.querySelector('input[type="text"]');
+        const firstInput = modal.querySelector('input[type="text"], textarea');
         if (firstInput) firstInput.focus();
     }, 400);
 }
@@ -131,6 +143,8 @@ function openModal(modal, paperForm) {
  * @param {HTMLElement} modal - The modal element
  */
 function closeModal(modal) {
+    if (!modal) return;
+    
     modal.classList.remove('active');
     document.body.style.overflow = ''; // Restore scrolling
 }
@@ -152,10 +166,12 @@ function applySelectedPricingOptions() {
     const creativityLevel = creativityLevelMapping[options.creativityLevel];
     if (creativityLevel) {
         const creativitySlider = document.getElementById('creativity-level');
-        creativitySlider.value = creativityLevel;
-        
-        // Update the slider labels UI
-        updateCreativitySliderLabels(creativityLevel);
+        if (creativitySlider) {
+            creativitySlider.value = creativityLevel;
+            
+            // Update the slider labels UI
+            updateCreativitySliderLabels(creativityLevel);
+        }
     }
     
     // Set quality control
@@ -171,31 +187,37 @@ function applySelectedPricingOptions() {
  * @param {HTMLElement} modal - The modal element
  */
 function setupFormInputListeners(modal) {
+    if (!modal) return;
+    
     // Update pricing when selections change
     document.querySelectorAll('input[name="paper-type"]').forEach(radio => {
         radio.addEventListener('change', updateModalPrices);
     });
     
     const creativitySlider = document.getElementById('creativity-level');
-    creativitySlider.addEventListener('input', function() {
-        updateCreativitySliderLabels(parseInt(this.value));
-        updateModalPrices();
-    });
+    if (creativitySlider) {
+        creativitySlider.addEventListener('input', function() {
+            updateCreativitySliderLabels(parseInt(this.value));
+            updateModalPrices();
+        });
+        
+        // Set initial slider label highlight
+        updateCreativitySliderLabels(1);
+    }
     
     document.querySelectorAll('input[name="quality-control"]').forEach(radio => {
         radio.addEventListener('change', updateModalPrices);
     });
     
-    // Set initial slider label highlight
-    updateCreativitySliderLabels(1);
-    
     // Update topic placeholder when discipline changes
     const disciplineSelect = document.getElementById('academic-discipline');
-    disciplineSelect.addEventListener('change', function() {
-        updateTopicPlaceholder(this.value);
-        updateFocusPlaceholder(this.value);
-        updateAdditionalPlaceholder(this.value);
-    });
+    if (disciplineSelect) {
+        disciplineSelect.addEventListener('change', function() {
+            updateTopicPlaceholder(this.value);
+            updateFocusPlaceholder(this.value);
+            updateAdditionalPlaceholder(this.value);
+        });
+    }
 }
 
 /**
@@ -254,12 +276,13 @@ function setupExpandableFields() {
             this.style.display = 'none';
             
             // Update placeholder based on current discipline
-            const discipline = document.getElementById('academic-discipline').value;
+            const discipline = document.getElementById('academic-discipline')?.value || '';
             updateFocusPlaceholder(discipline);
             
             // Focus the input after expanding
             setTimeout(() => {
-                document.getElementById('paper-focus').focus();
+                const paperFocus = document.getElementById('paper-focus');
+                if (paperFocus) paperFocus.focus();
             }, 300);
         });
     }
@@ -274,12 +297,13 @@ function setupExpandableFields() {
             this.style.display = 'none';
             
             // Update placeholder based on current discipline
-            const discipline = document.getElementById('academic-discipline').value;
+            const discipline = document.getElementById('academic-discipline')?.value || '';
             updateAdditionalPlaceholder(discipline);
             
             // Focus the textarea after expanding
             setTimeout(() => {
-                document.getElementById('additional-suggestions').focus();
+                const additionalSuggestions = document.getElementById('additional-suggestions');
+                if (additionalSuggestions) additionalSuggestions.focus();
             }, 300);
         });
     }
@@ -332,18 +356,32 @@ function updateModalPrices() {
     const qualityPrice = document.getElementById('quality-price');
     const modalTotalPrice = document.querySelector('.modal-price');
     
+    if (!paperTypePrice || !creativityPrice || !qualityPrice || !modalTotalPrice) {
+        console.error('Price elements not found in the DOM');
+        return;
+    }
+    
     // Get selected paper type
-    const selectedPaperType = document.querySelector('input[name="paper-type"]:checked').value;
+    const selectedPaperTypeEl = document.querySelector('input[name="paper-type"]:checked');
+    if (!selectedPaperTypeEl) return;
+    
+    const selectedPaperType = selectedPaperTypeEl.value;
     const paperTypeValue = paperTypePrices[selectedPaperType];
     paperTypePrice.innerHTML = `<span>Paper type:</span><span>+$${paperTypeValue.toFixed(2)}</span>`;
     
     // Get creativity level
-    const creativityLevel = parseInt(document.getElementById('creativity-level').value);
+    const creativitySlider = document.getElementById('creativity-level');
+    if (!creativitySlider) return;
+    
+    const creativityLevel = parseInt(creativitySlider.value);
     const creativityValue = creativityLevelPrices[creativityLevel - 1];
     creativityPrice.innerHTML = `<span>Creativity level:</span><span>+$${creativityValue.toFixed(2)}</span>`;
     
     // Get quality control
-    const selectedQuality = document.querySelector('input[name="quality-control"]:checked').value;
+    const selectedQualityEl = document.querySelector('input[name="quality-control"]:checked');
+    if (!selectedQualityEl) return;
+    
+    const selectedQuality = selectedQualityEl.value;
     const qualityValue = qualityControlPrices[selectedQuality];
     qualityPrice.innerHTML = `<span>Quality control:</span><span>+$${qualityValue.toFixed(2)}</span>`;
     
@@ -357,48 +395,92 @@ function updateModalPrices() {
 }
 
 /**
+ * Send form data to the backend API
+ * @param {Object} formData - The form data to send
+ * @returns {Promise} - A promise that resolves with the API response
+ */
+async function sendPaperRequest(formData) {
+    try {
+        const response = await fetch('http://localhost:3000/api/papers', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Error sending paper request:', error);
+        throw error; // Re-throw for handling in the calling function
+    }
+}
+
+/**
  * Set up the form submission handling
  * @param {HTMLElement} paperForm - The paper form element
  * @param {HTMLElement} modal - The modal element
  */
 function setupFormSubmission(paperForm, modal) {
-    paperForm.addEventListener('submit', function(event) {
+    if (!paperForm || !modal) {
+        console.error('Form elements not found for submission setup');
+        return;
+    }
+    
+    paperForm.addEventListener('submit', async function(event) {
         event.preventDefault();
         
         // Get form values
-        const paperTopic = document.getElementById('paper-topic').value;
-        const academicDiscipline = document.getElementById('academic-discipline').value;
-        const paperType = document.querySelector('input[name="paper-type"]:checked').value;
-        const creativityLevel = document.getElementById('creativity-level').value;
-        const qualityControl = document.querySelector('input[name="quality-control"]:checked').value;
-        const email = document.getElementById('email').value;
+        const paperTopic = document.getElementById('paper-topic')?.value || '';
+        const academicDiscipline = document.getElementById('academic-discipline')?.value || '';
+        const paperTypeEl = document.querySelector('input[name="paper-type"]:checked');
+        const creativityLevelEl = document.getElementById('creativity-level');
+        const qualityControlEl = document.querySelector('input[name="quality-control"]:checked');
+        const email = document.getElementById('email')?.value || '';
+        
+        if (!paperTopic || !academicDiscipline || !paperTypeEl || !creativityLevelEl || !qualityControlEl || !email) {
+            console.error('Required form fields missing');
+            return;
+        }
+        
+        const paperType = paperTypeEl.value;
+        const creativityLevel = creativityLevelEl.value;
+        const qualityControl = qualityControlEl.value;
         
         // Get optional fields if they exist
         const paperFocus = document.getElementById('paper-focus')?.value || '';
         const additionalSuggestions = document.getElementById('additional-suggestions')?.value || '';
         
-        // Simulate form submission
-        const submitButton = paperForm.querySelector('button[type="submit"]');
-        const originalText = submitButton.textContent;
+        // Prepare the request data
+        const requestData = {
+            paperTopic,
+            academicDiscipline,
+            paperType,
+            creativityLevel,
+            qualityControl,
+            email,
+            paperFocus,
+            additionalSuggestions
+        };
         
+        // Update UI to show we're processing
+        const submitButton = paperForm.querySelector('button[type="submit"]');
+        if (!submitButton) return;
+        
+        const originalText = submitButton.textContent;
         submitButton.textContent = 'Processing...';
         submitButton.disabled = true;
         
-        // Simulate API call with timeout
-        setTimeout(() => {
-            // Here you would normally send data to server
-            console.log('Paper requested:', {
-                topic: paperTopic,
-                discipline: academicDiscipline,
-                type: paperType,
-                creativityLevel: creativityLevel,
-                qualityControl: qualityControl,
-                email: email,
-                focus: paperFocus,
-                additionalSuggestions: additionalSuggestions
-            });
+        try {
+            // Make the actual API call - THIS IS NOW ENABLED
+            const response = await sendPaperRequest(requestData);
+            console.log('Paper request successful:', response);
             
-            // Reset button
+            // Success handling
             submitButton.textContent = 'Success! Redirecting...';
             
             // Close modal after delay
@@ -410,98 +492,16 @@ function setupFormSubmission(paperForm, modal) {
                     submitButton.disabled = false;
                 }, 500);
             }, 1500);
-        }, 2000);
+            
+        } catch (error) {
+            // Error handling
+            submitButton.textContent = 'Error! Please try again';
+            setTimeout(() => {
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            }, 2000);
+            
+            console.error('Failed to submit paper request:', error);
+        }
     });
 }
-
-/**
- * Send form data to the backend API
- * @param {Object} formData - The form data to send
- * @returns {Promise} - A promise that resolves with the API response
- */
-async function sendPaperRequest(formData) {
-    try {
-      const response = await fetch('http://localhost:3000/api/papers', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      return await response.json();
-    } catch (error) {
-      console.error('Error sending paper request:', error);
-      throw error; // Re-throw for handling in the calling function
-    }
-  }
-  
-  // Update the setupFormSubmission function to use the API
-  function setupFormSubmission(paperForm, modal) {
-    paperForm.addEventListener('submit', async function(event) {
-      event.preventDefault();
-      
-      // Get form values
-      const paperTopic = document.getElementById('paper-topic').value;
-      const academicDiscipline = document.getElementById('academic-discipline').value;
-      const paperType = document.querySelector('input[name="paper-type"]:checked').value;
-      const creativityLevel = document.getElementById('creativity-level').value;
-      const qualityControl = document.querySelector('input[name="quality-control"]:checked').value;
-      const email = document.getElementById('email').value;
-      
-      // Get optional fields if they exist
-      const paperFocus = document.getElementById('paper-focus')?.value || '';
-      const additionalSuggestions = document.getElementById('additional-suggestions')?.value || '';
-      
-      // Prepare the request data
-      const requestData = {
-        paperTopic,
-        academicDiscipline,
-        paperType,
-        creativityLevel,
-        qualityControl,
-        email,
-        paperFocus,
-        additionalSuggestions
-      };
-      
-      // Update UI to show we're processing
-      const submitButton = paperForm.querySelector('button[type="submit"]');
-      const originalText = submitButton.textContent;
-      submitButton.textContent = 'Processing...';
-      submitButton.disabled = true;
-      
-      try {
-        // Send the request to the API
-        const response = await sendPaperRequest(requestData);
-        
-        // Success handling
-        submitButton.textContent = 'Success! Redirecting...';
-        console.log('Paper request successful:', response);
-        
-        // Close modal after delay
-        setTimeout(() => {
-          closeModal(modal);
-          // Reset button text after modal is closed
-          setTimeout(() => {
-            submitButton.textContent = originalText;
-            submitButton.disabled = false;
-          }, 500);
-        }, 1500);
-        
-      } catch (error) {
-        // Error handling
-        submitButton.textContent = 'Error! Please try again';
-        setTimeout(() => {
-          submitButton.textContent = originalText;
-          submitButton.disabled = false;
-        }, 2000);
-        
-        console.error('Failed to submit paper request:', error);
-      }
-    });
-  }

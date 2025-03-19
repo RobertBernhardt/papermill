@@ -560,7 +560,36 @@
             </div>
         </div>
     </div>
-
+    <script>
+        // Test function to directly send data to the API
+        window.testApiConnection = function() {
+          fetch('http://localhost:3000/api/papers', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              paperTopic: "Test Topic",
+              academicDiscipline: "sciences",
+              paperType: "seminar",
+              creativityLevel: 1,
+              qualityControl: "basic",
+              email: "test@example.com",
+              paperFocus: "",
+              additionalSuggestions: ""
+            })
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log('Success:', data);
+            alert('API call successful! Check console for details.');
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('API call failed! Check console for details.');
+          });
+        }
+      </script>
     <!-- "The only thing to do with good script is to pass it on. It is never of any use unexecuted." -->
     <script src="src/index.js" type="module"></script>
 </body>
