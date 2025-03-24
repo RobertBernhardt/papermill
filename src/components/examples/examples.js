@@ -13,18 +13,25 @@ export function initExamples() {
 }
 
 /**
- * Load the first 3 examples
+ * Load the initial examples
  */
 function loadInitialExamples() {
     // Get container for examples
     const examplesGrid = document.querySelector('.example-papers-grid');
-    if (!examplesGrid) return;
+    if (!examplesGrid) {
+        console.error("Example papers grid not found");
+        return;
+    }
+    
+    // Clear any existing content
+    examplesGrid.innerHTML = '';
     
     // Get all examples
     const allExamples = getAllExamples();
     
-    // Load the first 3 examples
-    const initialExamples = allExamples.slice(0, 3);
+    // Load the first 3 examples - or all if there are fewer than 3
+    const initialCount = Math.min(3, allExamples.length);
+    const initialExamples = allExamples.slice(0, initialCount);
     
     // Create and append examples
     initialExamples.forEach((example, index) => {
@@ -69,16 +76,21 @@ function loadMoreExamples() {
     // Get all examples
     const allExamples = getAllExamples();
     
-    // Load the remaining examples (examples 3-5)
-    const additionalExamples = allExamples.slice(3);
-    if (additionalExamples.length === 0) return;
+    // Skip the examples already shown (assuming 3 initial examples)
+    const initialCount = Math.min(3, allExamples.length);
+    const additionalExamples = allExamples.slice(initialCount);
+    
+    if (additionalExamples.length === 0) {
+        console.log("No additional examples to load");
+        return;
+    }
     
     // Create and append new examples
     additionalExamples.forEach((example, index) => {
         // Create example element
         const exampleElement = createExampleElement(example);
         
-        // Add animation 
+        // Add animation
         exampleElement.style.opacity = '0';
         exampleElement.style.transform = 'translateY(20px)';
         
@@ -112,14 +124,19 @@ function createExampleElement(example) {
     exampleElement.className = 'example-paper';
     exampleElement.setAttribute('data-example-id', example.id);
     
+    // Prepare excerpt text - use the provided excerpt or take the first 150 chars of the abstract
+    const excerptText = example.excerpt || example.abstract.substring(0, 150) + '...';
+    
+    // Create HTML structure for example card
     exampleElement.innerHTML = `
         <h3>${example.title}</h3>
         <div class="paper-meta">
             <span class="field">${example.field}</span>
             <span class="type">${example.type}</span>
+            ${example.mark ? `<span class="mark">${example.mark}</span>` : ''}
         </div>
         <div class="paper-excerpt">
-            <p>${example.excerpt}</p>
+            <p>${excerptText}</p>
         </div>
         <div class="quality-score">
             <span class="score">${example.score.toFixed(1)}/10</span>

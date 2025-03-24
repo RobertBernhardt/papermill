@@ -9,6 +9,13 @@
 export function markdownToHtml(markdown) {
     if (!markdown) return '';
     
+    // Replace escaped characters first
+    markdown = markdown
+        .replace(/\\-/g, '-')
+        .replace(/\\'/g, "'")
+        .replace(/\\"/g, '"')
+        .replace(/\\\\/g, '\\');
+    
     // Process headings (# Heading) - h1 to h6
     markdown = markdown.replace(/^(#{1,6})\s+(.+)$/gm, (match, hashes, text) => {
         const level = hashes.length;
@@ -30,38 +37,111 @@ export function markdownToHtml(markdown) {
     // Process links [text](url)
     markdown = markdown.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
     
-    // Process lists
-    // Unordered lists
-    markdown = markdown.replace(/^\s*[-*+]\s+(.+)$/gm, '<li>$1</li>');
-    markdown = markdown.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
-    
-    // Ordered lists
-    markdown = markdown.replace(/^\s*(\d+)\.\s+(.+)$/gm, '<li>$2</li>');
-    markdown = markdown.replace(/(<li>.*<\/li>)/s, '<ol>$1</ol>');
-    
-    // Process paragraphs (empty line between paragraphs)
-    // First, replace single newlines with spaces
-    markdown = markdown.replace(/(?<!\n)\n(?!\n)/g, ' ');
-    
-    // Then handle double newlines as paragraph breaks
-    markdown = markdown.replace(/\n\n/g, '</p><p>');
-    
-    // Wrap everything in paragraphs if it's not already
-    // But avoid wrapping things that are already HTML tags
-    const hasHtmlTag = /^<([a-z][a-z0-9]*)\b[^>]*>/i.test(markdown.trim());
-    if (!hasHtmlTag) {
-        markdown = `<p>${markdown}</p>`;
+    // Process unordered lists
+    // First, mark list items
+    let inList = false;
+    const lines = markdown.split('\n');
+    for (let i = 0; i < lines.length; i++) {
+        if (/^\s*[-*+]\s+(.+)$/.test(lines[i])) {
+            // This is a list item
+            lines[i] = lines[i].replace(/^\s*[-*+]\s+(.+)$/, '<li>$1</li>');
+            
+            // Add list opening tag if not already in a list
+            if (!inList) {
+                lines[i] = '<ul>' + lines[i];
+                inList = true;
+            }
+        } else if (inList && lines[i].trim() === '') {
+            // Empty line after list - close the list
+            lines[i-1] = lines[i-1] + '</ul>';
+            inList = false;
+        } else if (inList && i === lines.length - 1) {
+            // End of content while still in a list - close the list
+            lines[i] = lines[i] + '</ul>';
+            inList = false;
+        }
     }
     
-    // Fix nested paragraph tags
-    markdown = markdown.replace(/<p><(h[1-6]|ul|ol|pre|blockquote)/g, '<$1');
-    markdown = markdown.replace(/(<\/(h[1-6]|ul|ol|pre|blockquote)>)<\/p>/g, '$1');
+    // If we ended the content still in a list, close it
+    if (inList) {
+        lines[lines.length - 1] += '</ul>';
+    }
+    
+    markdown = lines.join('\n');
+    
+    // Process ordered lists (similar approach as unordered lists)
+    inList = false;
+    const lines2 = markdown.split('\n');
+    for (let i = 0; i < lines2.length; i++) {
+        if (/^\s*(\d+)\.\s+(.+)$/.test(lines2[i])) {
+            // This is a list item
+            lines2[i] = lines2[i].replace(/^\s*(\d+)\.\s+(.+)$/, '<li>$2</li>');
+            
+            // Add list opening tag if not already in a list
+            if (!inList) {
+                lines2[i] = '<ol>' + lines2[i];
+                inList = true;
+            }
+        } else if (inList && lines2[i].trim() === '') {
+            // Empty line after list - close the list
+            lines2[i-1] = lines2[i-1] + '</ol>';
+            inList = false;
+        } else if (inList && i === lines2.length - 1) {
+            // End of content while still in a list - close the list
+            lines2[i] = lines2[i] + '</ol>';
+            inList = false;
+        }
+    }
+    
+    // If we ended the content still in a list, close it
+    if (inList) {
+        lines2[lines2.length - 1] += '</ol>';
+    }
+    
+    markdown = lines2.join('\n');
     
     // Process blockquotes
-    markdown = markdown.replace(/^\s*>\s+(.+)$/gm, '<blockquote>$1</blockquote>');
+    inList = false; // Reuse this variable to track if we're in a blockquote
+    const lines3 = markdown.split('\n');
+    for (let i = 0; i < lines3.length; i++) {
+        if (/^\s*>\s+(.+)$/.test(lines3[i])) {
+            // This is a blockquote line
+            lines3[i] = lines3[i].replace(/^\s*>\s+(.+)$/, '<blockquote>$1</blockquote>');
+            
+            // Don't handle nested blockquotes for simplicity
+        }
+    }
+    
+    markdown = lines3.join('\n');
     
     // Process horizontal rules (---)
     markdown = markdown.replace(/^---$/gm, '<hr>');
+    
+    // Process paragraphs (new line as paragraph break)
+    // First, replace single newlines with line breaks
+    const processParagraphs = text => {
+        // Split by double newlines (paragraph breaks)
+        const paragraphs = text.split(/\n\n+/);
+        
+        return paragraphs.map(p => {
+            // Skip if this is already a tag
+            if (/^<(\w+)/.test(p.trim())) return p;
+            
+            // Replace single newlines with <br>
+            const withBreaks = p.replace(/\n/g, '<br>');
+            
+            // Wrap in paragraph tags if not empty
+            return withBreaks.trim() ? `<p>${withBreaks}</p>` : '';
+        }).join('\n');
+    };
+    
+    markdown = processParagraphs(markdown);
+    
+    // Fix nested tags
+    // This is a simplistic approach - a proper parser would be better
+    markdown = markdown
+        .replace(/<p><(h[1-6]|ul|ol|pre|blockquote)/g, '<$1')
+        .replace(/(<\/(h[1-6]|ul|ol|pre|blockquote)>)<\/p>/g, '$1');
     
     return markdown;
 }
@@ -113,5 +193,26 @@ export function formatMarkdownForModal(markdown) {
     // Remove academic outlook section if present
     const withoutOutlook = withoutReferences.replace(/^#\s+Academic Outlook[\s\S]*(?:^#|$)/m, '');
     
-    return withoutOutlook.trim();
+    // Limit the content to a reasonable amount for preview
+    let limitedContent = withoutOutlook.trim();
+    
+    // If content is very long, truncate it
+    if (limitedContent.length > 10000) {
+        // Find a good cutoff point - preferably at a section heading
+        const lastHeadingMatch = limitedContent.slice(0, 10000).match(/^#\s+[^\n]+$/gm);
+        if (lastHeadingMatch && lastHeadingMatch.length > 1) {
+            // Cut off after the second-to-last heading found
+            const lastIndex = limitedContent.lastIndexOf(lastHeadingMatch[lastHeadingMatch.length - 2]);
+            if (lastIndex > 0) {
+                limitedContent = limitedContent.slice(0, lastIndex) + 
+                    '\n\n## Preview Truncated\n\nThis is a preview of the paper. The full version would continue beyond this point.';
+            }
+        } else {
+            // If no good cutoff point, just truncate at 10000 chars
+            limitedContent = limitedContent.slice(0, 10000) + 
+                '\n\n## Preview Truncated\n\nThis is a preview of the paper. The full version would continue beyond this point.';
+        }
+    }
+    
+    return limitedContent;
 }

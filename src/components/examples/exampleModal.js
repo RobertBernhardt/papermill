@@ -1,8 +1,12 @@
 // Example Modal Module
 // Handles the creation and management of example detail modals
+// With lazy loading PDF support
 
-import { getExampleById, getAllExamples, loadExampleContent } from './exampleContent.js';
-import { markdownToHtml, formatMarkdownForModal } from './markdownUtils.js';
+import { getExampleById, getAllExamples } from './exampleContent.js';
+import { markdownToHtml } from './markdownUtils.js';
+
+// Track loaded PDFs to avoid reloading
+const loadedPdfs = {};
 
 /**
  * Initialize the example modal functionality
@@ -42,18 +46,25 @@ function createExampleModal() {
                                 <div id="example-modal-score-fill" class="score-fill" style="width: 0%;"></div>
                             </div>
                         </div>
+                        <span id="example-modal-mark" class="mark"></span>
                     </div>
                     
                     <div class="example-modal-section">
                         <h3>Abstract</h3>
-                        <p id="example-modal-abstract"></p>
+                        <div id="example-modal-abstract"></div>
                     </div>
                     
                     <div class="example-modal-section paper-content-section">
                         <h3>Paper Preview</h3>
                         <div class="paper-preview">
                             <div id="example-modal-content" class="paper-preview-content">
-                                <div class="loading-indicator">Loading content...</div>
+                                <div class="pdf-placeholder">
+                                    <p>Paper preview will load on demand.</p>
+                                </div>
+                            </div>
+                            <div class="pdf-controls">
+                                <button id="load-pdf-button" class="cta-button secondary">Load PDF Preview</button>
+                                <a id="download-pdf-link" class="cta-link" target="_blank">Download Full PDF</a>
                             </div>
                             <button class="cta-button preview-cta">Generate Similar Paper</button>
                         </div>
@@ -74,86 +85,6 @@ function createExampleModal() {
     
     // Add modal to the page
     document.body.appendChild(modalOverlay);
-    
-    // Add styles for content display
-    addExampleModalStyles();
-}
-
-/**
- * Add styles specific to the example modal content
- */
-function addExampleModalStyles() {
-    // Check if styles already exist
-    if (document.getElementById('example-modal-styles')) return;
-    
-    const styleElement = document.createElement('style');
-    styleElement.id = 'example-modal-styles';
-    styleElement.textContent = `
-        .paper-preview-content {
-            max-height: 400px;
-            overflow-y: auto;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border);
-            position: relative;
-        }
-        
-        .paper-preview-content h1 {
-            font-size: 1.6rem;
-            margin-bottom: 1rem;
-            color: var(--primary);
-        }
-        
-        .paper-preview-content h2 {
-            font-size: 1.4rem;
-            margin: 1.5rem 0 1rem;
-            color: var(--primary);
-        }
-        
-        .paper-preview-content h3 {
-            font-size: 1.2rem;
-            margin: 1.2rem 0 0.8rem;
-            color: var(--primary);
-        }
-        
-        .paper-preview-content p {
-            margin-bottom: 1rem;
-            line-height: 1.6;
-        }
-        
-        .paper-preview-content ul, 
-        .paper-preview-content ol {
-            margin-bottom: 1rem;
-            padding-left: 1.5rem;
-        }
-        
-        .paper-preview-content li {
-            margin-bottom: 0.5rem;
-        }
-        
-        .paper-preview-content blockquote {
-            border-left: 3px solid var(--secondary);
-            padding-left: 1rem;
-            margin: 1rem 0;
-            color: var(--light-text);
-            font-style: italic;
-        }
-        
-        .loading-indicator {
-            text-align: center;
-            padding: 2rem;
-            color: var(--light-text);
-            font-style: italic;
-        }
-        
-        .paper-content-section {
-            margin-top: 1.5rem;
-        }
-    `;
-    
-    document.head.appendChild(styleElement);
 }
 
 /**
@@ -175,6 +106,14 @@ function setupExampleModalEventListeners() {
     modal.addEventListener('click', (event) => {
         if (event.target === modal) {
             closeExampleModal();
+        }
+    });
+    
+    // Add listener for PDF load button - dynamically added each time modal is opened
+    modal.addEventListener('click', function(event) {
+        if (event.target.id === 'load-pdf-button') {
+            const exampleId = modal.getAttribute('data-example-id');
+            loadPdfContent(exampleId);
         }
     });
     
@@ -226,12 +165,19 @@ function setupExampleModalEventListeners() {
  * Open the example modal with content for a specific example
  * @param {string} exampleId - The ID of the example to display
  */
-export async function openExampleModal(exampleId) {
+export function openExampleModal(exampleId) {
+    console.log(`Opening example modal for: ${exampleId}`);
     const modal = document.getElementById('exampleModal');
-    if (!modal) return;
+    if (!modal) {
+        console.error('Example modal not found in DOM');
+        return;
+    }
     
     const example = getExampleById(exampleId);
-    if (!example) return;
+    if (!example) {
+        console.error(`Example with ID ${exampleId} not found`);
+        return;
+    }
     
     // Set example ID on modal
     modal.setAttribute('data-example-id', exampleId);
@@ -242,7 +188,76 @@ export async function openExampleModal(exampleId) {
     document.getElementById('example-modal-type').textContent = example.type;
     document.getElementById('example-modal-score').textContent = example.score.toFixed(1) + '/10';
     document.getElementById('example-modal-score-fill').style.width = (example.score * 10) + '%';
-    document.getElementById('example-modal-abstract').textContent = example.abstract;
+    
+    // Display mark if available
+    const markElement = document.getElementById('example-modal-mark');
+    if (markElement) {
+        if (example.mark) {
+            markElement.textContent = example.mark;
+            markElement.style.display = 'inline-block';
+        } else {
+            markElement.style.display = 'none';
+        }
+    }
+    
+    // Process the abstract - convert line breaks to proper HTML
+    const abstractElement = document.getElementById('example-modal-abstract');
+    if (abstractElement && example.abstract) {
+        // Use markdown conversion for the abstract to handle line breaks properly
+        const processedAbstract = example.abstract
+            .replace(/\\-/g, '-') // Fix escaped hyphens
+            .replace(/\\'/g, "'"); // Fix escaped apostrophes
+        abstractElement.innerHTML = markdownToHtml(processedAbstract);
+    }
+    
+    // Prepare the PDF content area with placeholder - PDF will load on button click
+    const contentContainer = document.getElementById('example-modal-content');
+    if (contentContainer) {
+        const fileSize = example.fileSize || 'Unknown size';
+        
+        // Check if we've already loaded this PDF
+        if (loadedPdfs[exampleId]) {
+            contentContainer.innerHTML = loadedPdfs[exampleId];
+        } else {
+            // Show placeholder with load button
+            contentContainer.innerHTML = `
+                <div class="pdf-placeholder">
+                    <div class="pdf-info">
+                        <div class="pdf-icon">
+                            <svg viewBox="0 0 24 24" width="48" height="48">
+                                <path fill="#e74c3c" d="M14,2H6C4.9,2,4,2.9,4,4v16c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V8L14,2z M16,18H8v-2h8V18z M16,14H8v-2h8V14z M13,9V3.5L18.5,9H13z"/>
+                            </svg>
+                        </div>
+                        <div class="pdf-details">
+                            <p class="pdf-title">${example.title}</p>
+                            <p class="pdf-size">PDF Preview Available (${fileSize})</p>
+                            <p class="pdf-note">Click "Load PDF Preview" to view the document</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    // Update the download link
+    const downloadLink = document.getElementById('download-pdf-link');
+    if (downloadLink && example.pdfPath) {
+        downloadLink.setAttribute('href', example.pdfPath);
+        downloadLink.textContent = `Download Full PDF (${example.fileSize || 'Unknown size'})`;
+    }
+    
+    // Update the load button
+    const loadButton = document.getElementById('load-pdf-button');
+    if (loadButton) {
+        // Disable button if PDF already loaded
+        if (loadedPdfs[exampleId]) {
+            loadButton.textContent = 'PDF Loaded';
+            loadButton.disabled = true;
+        } else {
+            loadButton.textContent = 'Load PDF Preview';
+            loadButton.disabled = false;
+        }
+    }
     
     // Update navigation buttons
     const prevButton = document.getElementById('prev-example');
@@ -268,36 +283,72 @@ export async function openExampleModal(exampleId) {
             modalContainer.classList.remove('modal-animate-in');
         }, 500);
     }
+}
+
+/**
+ * Load the PDF content for a specific example
+ * @param {string} exampleId - The ID of the example to load PDF for
+ */
+function loadPdfContent(exampleId) {
+    console.log(`Loading PDF for example: ${exampleId}`);
+    const example = getExampleById(exampleId);
+    if (!example || !example.pdfPath) {
+        console.error(`No PDF path found for example ${exampleId}`);
+        return;
+    }
+    
+    const contentContainer = document.getElementById('example-modal-content');
+    if (!contentContainer) return;
     
     // Show loading indicator
-    const contentContainer = document.getElementById('example-modal-content');
-    if (contentContainer) {
-        contentContainer.innerHTML = '<div class="loading-indicator">Loading content...</div>';
-    }
+    contentContainer.innerHTML = `
+        <div class="pdf-loading">
+            <div class="loading-spinner"></div>
+            <p>Loading PDF preview...</p>
+        </div>
+    `;
     
-    // Load markdown content
-    try {
-        if (example.contentFilePath) {
-            const markdownContent = await loadExampleContent(example.contentFilePath);
-            const formattedMarkdown = formatMarkdownForModal(markdownContent);
-            const htmlContent = markdownToHtml(formattedMarkdown);
-            
-            // Update content container
-            if (contentContainer) {
-                contentContainer.innerHTML = htmlContent;
-            }
-        } else {
-            // Fallback to placeholder
-            if (contentContainer) {
-                contentContainer.innerHTML = '<p>No content available for this example.</p>';
-            }
+    // Create iframe for PDF and listen for load events
+    const pdfContent = `
+        <div class="pdf-container">
+            <iframe 
+                src="${example.pdfPath}"
+                width="100%" 
+                height="500" 
+                class="pdf-viewer"
+                title="${example.title}"
+                allowfullscreen>
+                <p>Your browser doesn't support embedded PDFs. <a href="${example.pdfPath}" target="_blank">Download the PDF</a> instead.</p>
+            </iframe>
+        </div>
+    `;
+    
+    // Cache the loaded PDF content
+    loadedPdfs[exampleId] = pdfContent;
+    
+    // Short delay to show loading indicator before displaying PDF
+    setTimeout(() => {
+        contentContainer.innerHTML = pdfContent;
+        
+        // Update the load button
+        const loadButton = document.getElementById('load-pdf-button');
+        if (loadButton) {
+            loadButton.textContent = 'PDF Loaded';
+            loadButton.disabled = true;
         }
-    } catch (error) {
-        console.error('Error loading content:', error);
-        if (contentContainer) {
-            contentContainer.innerHTML = '<p>Error loading content. Please try again later.</p>';
+        
+        // Add event listener to detect if PDF failed to load
+        const iframe = contentContainer.querySelector('iframe');
+        if (iframe) {
+            iframe.addEventListener('error', () => {
+                contentContainer.innerHTML = `
+                    <div class="pdf-error">
+                        <p>Failed to load PDF preview. Please try downloading the PDF instead.</p>
+                    </div>
+                `;
+            });
         }
-    }
+    }, 800); // Short delay for better UX
 }
 
 /**
