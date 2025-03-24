@@ -13,6 +13,7 @@ import { fadeInElements } from './utils/animations.js';
 import { initPaperWizardAnimation } from './components/animations/paperWizardAnimation.js';
 import { initExamples } from './components/examples/examples.js';
 import { initExampleModal } from './components/examples/exampleModal.js';
+import { initCookieNotice } from './components/cookie/cookieNotice.js';
 
 // Initialize the application when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
@@ -27,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initTestimonials();
     initAdditionalModals(); // This now includes legal content initialization
     initPaperWizardAnimation();
+    initCookieNotice();
     
     // Initialize our new examples components
     initExampleModal(); // Initialize the modal first

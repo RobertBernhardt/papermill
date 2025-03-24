@@ -10,7 +10,7 @@ export function getPaperFormTemplate() {
         <form class="paper-form">
             <div class="form-group paper-topic-group">
                 <label for="paper-topic">Your Paper Topic</label>
-                <textarea id="paper-topic" class="paper-topic-textarea" placeholder="e.g., The impact of climate change on marine ecosystems" required rows="2"></textarea>
+                <textarea id="paper-topic" name="paper-topic" class="paper-topic-textarea" placeholder="e.g., The impact of climate change on marine ecosystems" required rows="2"></textarea>
             </div>
             
             <div class="form-group optional-field-group">
@@ -19,7 +19,7 @@ export function getPaperFormTemplate() {
                 </button>
                 <div id="focus-field-container" class="expandable-field">
                     <label for="paper-focus" class="secondary-label">Paper Focus (Optional)</label>
-                    <textarea id="paper-focus" maxlength="200" class="focus-textarea" placeholder="Focus on specific aspects of your topic"></textarea>
+                    <textarea id="paper-focus" name="paper-focus" maxlength="200" class="focus-textarea" placeholder="Focus on specific aspects of your topic"></textarea>
                     <div class="char-counter"><span id="focus-char-count">0</span>/200</div>
                 </div>
             </div>
@@ -30,13 +30,13 @@ export function getPaperFormTemplate() {
                 </button>
                 <div id="additional-field-container" class="expandable-field">
                     <label for="additional-suggestions" class="secondary-label">Additional Ideas & Suggestions (Optional)</label>
-                    <textarea id="additional-suggestions" rows="4" class="suggestions-textarea" placeholder="Share any additional ideas or requirements"></textarea>
+                    <textarea id="additional-suggestions" name="additional-suggestions" rows="4" class="suggestions-textarea" placeholder="Share any additional ideas or requirements"></textarea>
                 </div>
             </div>
             
             <div class="form-group">
                 <label for="academic-discipline">Academic Discipline</label>
-                <select id="academic-discipline" required>
+                <select id="academic-discipline" name="academic-discipline" required>
                     <option value="" selected>Select your discipline</option>
                     <option value="economics">Economics</option>
                     <option value="history">History</option>
@@ -82,7 +82,7 @@ export function getPaperFormTemplate() {
             <div class="form-group">
                 <label>Creativity Level</label>
                 <div class="creativity-slider">
-                    <input type="range" min="1" max="5" value="1" id="creativity-level">
+                    <input type="range" min="1" max="5" value="1" id="creativity-level" name="creativity-level">
                     <div class="slider-labels">
                         <span>Basic</span>
                         <span>Advanced</span>
@@ -113,7 +113,7 @@ export function getPaperFormTemplate() {
             
             <div class="form-group">
                 <label for="email">Your Email</label>
-                <input type="email" id="email" placeholder="Where should we send your paper?" required>
+                <input type="email" id="email" name="email" placeholder="Where should we send your paper?" required>
             </div>
             
             <div class="pricing-summary">
@@ -149,28 +149,4 @@ export function getPaperFormTemplate() {
             <p class="tax-notice">Additional taxes may apply depending on your location. The final amount will be calculated during checkout.</p>
         </form>
     `;
-}
-
-/**
- * Initialize the character counter for the focus field
- */
-export function initCharCounter() {
-    const focusTextarea = document.getElementById('paper-focus');
-    const charCount = document.getElementById('focus-char-count');
-    
-    if (focusTextarea && charCount) {
-        // Set initial character count to 0
-        charCount.textContent = '0';
-        
-        focusTextarea.addEventListener('input', function() {
-            charCount.textContent = this.value.length;
-            
-            // Add warning class if approaching limit
-            if (this.value.length > 180) {
-                charCount.classList.add('char-count-warning');
-            } else {
-                charCount.classList.remove('char-count-warning');
-            }
-        });
-    }
 }

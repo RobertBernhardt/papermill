@@ -55,9 +55,8 @@ export function initModal() {
     }
     
     const modalClose = modal.querySelector('.modal-close');
-    const paperForm = modal.querySelector('.paper-form');
     
-    if (!modalClose || !paperForm) {
+    if (!modalClose) {
         console.error('Required modal elements not found');
         return;
     }
@@ -65,7 +64,7 @@ export function initModal() {
     // Add event listeners to pricing section CTA button
     const pricingCTA = document.querySelector('.pricing-cta .cta-button');
     if (pricingCTA) {
-        pricingCTA.addEventListener('click', () => openModal(modal, paperForm));
+        pricingCTA.addEventListener('click', () => openModal(modal));
     }
     
     // Add event listeners to all other CTA buttons
@@ -74,7 +73,7 @@ export function initModal() {
         button.addEventListener('click', function() {
             // Reset to default options when opened from buttons outside pricing section
             resetPricingOptions();
-            openModal(modal, paperForm);
+            openModal(modal);
         });
     });
     
@@ -101,23 +100,26 @@ export function initModal() {
     // Set up expand buttons for additional fields
     setupExpandableFields();
     
-    // Handle form submission
-    setupFormSubmission(paperForm, modal);
+    // Set up form submission
+    setupFormSubmission(modal);
 }
 
 /**
  * Open the modal and initialize form values
  * @param {HTMLElement} modal - The modal element
- * @param {HTMLElement} paperForm - The paper form element
  */
-function openModal(modal, paperForm) {
-    if (!modal || !paperForm) return;
+function openModal(modal) {
+    if (!modal) return;
     
     modal.classList.add('active');
     document.body.style.overflow = 'hidden'; // Prevent scrolling behind modal
     
-    // Reset form first
-    paperForm.reset();
+    // Get the current form
+    const paperForm = modal.querySelector('.paper-form');
+    if (paperForm) {
+        // Reset form first
+        paperForm.reset();
+    }
     
     // Reset expandable fields
     resetExpandableFields();
@@ -401,6 +403,7 @@ function updateModalPrices() {
  */
 async function sendPaperRequest(formData) {
     try {
+        console.log('Sending data to API:', formData);
         const response = await fetch('http://localhost:3000/api/papers', {
             method: 'POST',
             headers: {
@@ -422,86 +425,164 @@ async function sendPaperRequest(formData) {
 
 /**
  * Set up the form submission handling
- * @param {HTMLElement} paperForm - The paper form element
  * @param {HTMLElement} modal - The modal element
  */
-function setupFormSubmission(paperForm, modal) {
-    if (!paperForm || !modal) {
-        console.error('Form elements not found for submission setup');
+function setupFormSubmission(modal) {
+    if (!modal) {
+        console.error('Modal element not found for submission setup');
         return;
     }
     
-    paperForm.addEventListener('submit', async function(event) {
-        event.preventDefault();
-        
-        // Get form values
-        const paperTopic = document.getElementById('paper-topic')?.value || '';
-        const academicDiscipline = document.getElementById('academic-discipline')?.value || '';
-        const paperTypeEl = document.querySelector('input[name="paper-type"]:checked');
-        const creativityLevelEl = document.getElementById('creativity-level');
-        const qualityControlEl = document.querySelector('input[name="quality-control"]:checked');
-        const email = document.getElementById('email')?.value || '';
-        
-        if (!paperTopic || !academicDiscipline || !paperTypeEl || !creativityLevelEl || !qualityControlEl || !email) {
-            console.error('Required form fields missing');
-            return;
+    // Add a click event listener directly to the submit button
+    // This avoids any form validation issues
+    const submitHandler = function(event) {
+        // Add a click handler to any submit button in the modal
+        if (event.target && event.target.type === 'submit' && 
+            (event.target.classList.contains('cta-button') || 
+             event.target.closest('.paper-form'))) {
+            
+            // Prevent the default form submission
+            event.preventDefault();
+            event.stopPropagation();
+            
+            console.log('Submit button clicked!');
+            
+            // Get the form element that contains this button
+            const form = event.target.closest('.paper-form');
+            if (!form) {
+                console.error('Form not found!');
+                return;
+            }
+            
+            // Manually collect form values from the form
+            const paperTopicEl = form.querySelector('#paper-topic');
+            const academicDisciplineEl = form.querySelector('#academic-discipline');
+            const paperTypeEl = form.querySelector('input[name="paper-type"]:checked');
+            const creativityLevelEl = form.querySelector('#creativity-level');
+            const qualityControlEl = form.querySelector('input[name="quality-control"]:checked');
+            const emailEl = form.querySelector('#email');
+            
+            // Log the actual DOM elements to verify they exist
+            console.log('Form elements:', {
+                paperTopicEl,
+                academicDisciplineEl,
+                paperTypeEl,
+                creativityLevelEl,
+                qualityControlEl,
+                emailEl
+            });
+            
+            // Get values and apply validation
+            const paperTopic = paperTopicEl ? paperTopicEl.value : '';
+            const academicDiscipline = academicDisciplineEl ? academicDisciplineEl.value : '';
+            const paperType = paperTypeEl ? paperTypeEl.value : '';
+            const creativityLevel = creativityLevelEl ? creativityLevelEl.value : '';
+            const qualityControl = qualityControlEl ? qualityControlEl.value : '';
+            const email = emailEl ? emailEl.value : '';
+            
+            // Log the collected values
+            console.log('Collected form values:', {
+                paperTopic,
+                academicDiscipline,
+                paperType,
+                creativityLevel,
+                qualityControl,
+                email
+            });
+            
+            // Validation
+            if (!paperTopic) {
+                console.error('Paper topic is required');
+                if (paperTopicEl) {
+                    paperTopicEl.focus();
+                    // Add visual indication
+                    paperTopicEl.classList.add('error-field');
+                    setTimeout(() => paperTopicEl.classList.remove('error-field'), 3000);
+                }
+                return;
+            }
+            
+            if (!academicDiscipline) {
+                console.error('Academic discipline is required');
+                if (academicDisciplineEl) {
+                    academicDisciplineEl.focus();
+                    academicDisciplineEl.classList.add('error-field');
+                    setTimeout(() => academicDisciplineEl.classList.remove('error-field'), 3000);
+                }
+                return;
+            }
+            
+            if (!email) {
+                console.error('Email is required');
+                if (emailEl) {
+                    emailEl.focus();
+                    emailEl.classList.add('error-field');
+                    setTimeout(() => emailEl.classList.remove('error-field'), 3000);
+                }
+                return;
+            }
+            
+            // Get optional fields if they exist
+            const paperFocusEl = form.querySelector('#paper-focus');
+            const additionalSuggestionsEl = form.querySelector('#additional-suggestions');
+            
+            const paperFocus = paperFocusEl ? paperFocusEl.value : '';
+            const additionalSuggestions = additionalSuggestionsEl ? additionalSuggestionsEl.value : '';
+            
+            // Prepare the request data
+            const requestData = {
+                paperTopic,
+                academicDiscipline,
+                paperType,
+                creativityLevel,
+                qualityControl,
+                email,
+                paperFocus,
+                additionalSuggestions
+            };
+            
+            // Update UI to show we're processing
+            const submitButton = event.target;
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Processing...';
+            submitButton.disabled = true;
+            
+            console.log('Ready to send data to API:', requestData);
+            
+            // Async function to send data
+            (async function() {
+                try {
+                    // Make the API call
+                    const response = await sendPaperRequest(requestData);
+                    console.log('Paper request successful:', response);
+                    
+                    // Success handling
+                    submitButton.textContent = 'Success! Redirecting...';
+                    
+                    // Close modal after delay
+                    setTimeout(() => {
+                        closeModal(modal);
+                        // Reset button text after modal is closed
+                        setTimeout(() => {
+                            submitButton.textContent = originalText;
+                            submitButton.disabled = false;
+                        }, 500);
+                    }, 1500);
+                    
+                } catch (error) {
+                    // Error handling
+                    submitButton.textContent = 'Error! Please try again';
+                    setTimeout(() => {
+                        submitButton.textContent = originalText;
+                        submitButton.disabled = false;
+                    }, 2000);
+                    
+                    console.error('Failed to submit paper request:', error);
+                }
+            })();
         }
-        
-        const paperType = paperTypeEl.value;
-        const creativityLevel = creativityLevelEl.value;
-        const qualityControl = qualityControlEl.value;
-        
-        // Get optional fields if they exist
-        const paperFocus = document.getElementById('paper-focus')?.value || '';
-        const additionalSuggestions = document.getElementById('additional-suggestions')?.value || '';
-        
-        // Prepare the request data
-        const requestData = {
-            paperTopic,
-            academicDiscipline,
-            paperType,
-            creativityLevel,
-            qualityControl,
-            email,
-            paperFocus,
-            additionalSuggestions
-        };
-        
-        // Update UI to show we're processing
-        const submitButton = paperForm.querySelector('button[type="submit"]');
-        if (!submitButton) return;
-        
-        const originalText = submitButton.textContent;
-        submitButton.textContent = 'Processing...';
-        submitButton.disabled = true;
-        
-        try {
-            // Make the actual API call - THIS IS NOW ENABLED
-            const response = await sendPaperRequest(requestData);
-            console.log('Paper request successful:', response);
-            
-            // Success handling
-            submitButton.textContent = 'Success! Redirecting...';
-            
-            // Close modal after delay
-            setTimeout(() => {
-                closeModal(modal);
-                // Reset button text after modal is closed
-                setTimeout(() => {
-                    submitButton.textContent = originalText;
-                    submitButton.disabled = false;
-                }, 500);
-            }, 1500);
-            
-        } catch (error) {
-            // Error handling
-            submitButton.textContent = 'Error! Please try again';
-            setTimeout(() => {
-                submitButton.textContent = originalText;
-                submitButton.disabled = false;
-            }, 2000);
-            
-            console.error('Failed to submit paper request:', error);
-        }
-    });
+    };
+    
+    // Add the event listener to the modal to catch all clicks
+    modal.addEventListener('click', submitHandler);
 }
