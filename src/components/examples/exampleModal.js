@@ -1,7 +1,8 @@
 // Example Modal Module
 // Handles the creation and management of example detail modals
 
-import { getExampleById, getAllExamples } from './exampleContent.js';
+import { getExampleById, getAllExamples, loadExampleContent } from './exampleContent.js';
+import { markdownToHtml, formatMarkdownForModal } from './markdownUtils.js';
 
 /**
  * Initialize the example modal functionality
@@ -48,12 +49,13 @@ function createExampleModal() {
                         <p id="example-modal-abstract"></p>
                     </div>
                     
-                    <div class="example-modal-section">
+                    <div class="example-modal-section paper-content-section">
                         <h3>Paper Preview</h3>
                         <div class="paper-preview">
-                            <div class="paper-preview-content">
-                                <button class="cta-button preview-cta">Generate Similar Paper</button>
+                            <div id="example-modal-content" class="paper-preview-content">
+                                <div class="loading-indicator">Loading content...</div>
                             </div>
+                            <button class="cta-button preview-cta">Generate Similar Paper</button>
                         </div>
                     </div>
                     
@@ -72,6 +74,86 @@ function createExampleModal() {
     
     // Add modal to the page
     document.body.appendChild(modalOverlay);
+    
+    // Add styles for content display
+    addExampleModalStyles();
+}
+
+/**
+ * Add styles specific to the example modal content
+ */
+function addExampleModalStyles() {
+    // Check if styles already exist
+    if (document.getElementById('example-modal-styles')) return;
+    
+    const styleElement = document.createElement('style');
+    styleElement.id = 'example-modal-styles';
+    styleElement.textContent = `
+        .paper-preview-content {
+            max-height: 400px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        
+        .paper-preview-content h1 {
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .paper-preview-content h2 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--primary);
+        }
+        
+        .paper-preview-content h3 {
+            font-size: 1.2rem;
+            margin: 1.2rem 0 0.8rem;
+            color: var(--primary);
+        }
+        
+        .paper-preview-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .paper-preview-content ul, 
+        .paper-preview-content ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+        
+        .paper-preview-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .paper-preview-content blockquote {
+            border-left: 3px solid var(--secondary);
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: var(--light-text);
+            font-style: italic;
+        }
+        
+        .loading-indicator {
+            text-align: center;
+            padding: 2rem;
+            color: var(--light-text);
+            font-style: italic;
+        }
+        
+        .paper-content-section {
+            margin-top: 1.5rem;
+        }
+    `;
+    
+    document.head.appendChild(styleElement);
 }
 
 /**
@@ -144,7 +226,7 @@ function setupExampleModalEventListeners() {
  * Open the example modal with content for a specific example
  * @param {string} exampleId - The ID of the example to display
  */
-export function openExampleModal(exampleId) {
+export async function openExampleModal(exampleId) {
     const modal = document.getElementById('exampleModal');
     if (!modal) return;
     
@@ -185,6 +267,36 @@ export function openExampleModal(exampleId) {
         setTimeout(() => {
             modalContainer.classList.remove('modal-animate-in');
         }, 500);
+    }
+    
+    // Show loading indicator
+    const contentContainer = document.getElementById('example-modal-content');
+    if (contentContainer) {
+        contentContainer.innerHTML = '<div class="loading-indicator">Loading content...</div>';
+    }
+    
+    // Load markdown content
+    try {
+        if (example.contentFilePath) {
+            const markdownContent = await loadExampleContent(example.contentFilePath);
+            const formattedMarkdown = formatMarkdownForModal(markdownContent);
+            const htmlContent = markdownToHtml(formattedMarkdown);
+            
+            // Update content container
+            if (contentContainer) {
+                contentContainer.innerHTML = htmlContent;
+            }
+        } else {
+            // Fallback to placeholder
+            if (contentContainer) {
+                contentContainer.innerHTML = '<p>No content available for this example.</p>';
+            }
+        }
+    } catch (error) {
+        console.error('Error loading content:', error);
+        if (contentContainer) {
+            contentContainer.innerHTML = '<p>Error loading content. Please try again later.</p>';
+        }
     }
 }
 

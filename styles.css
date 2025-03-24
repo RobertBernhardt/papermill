@@ -3392,3 +3392,224 @@ input[type="email"] {
         padding: 10px;
     }
 }
+/* Additional styles for the markdown content */
+
+/* Style for the example modal body */
+.example-modal-content {
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Style for paper preview content */
+.paper-preview-content {
+    max-height: 400px;
+    overflow-y: auto;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border);
+    position: relative;
+    font-size: 0.9rem;
+}
+
+/* Scrollbar styles for the preview content */
+.paper-preview-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.paper-preview-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.paper-preview-content::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.paper-preview-content::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+}
+
+/* Headings */
+.paper-preview-content h1 {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+    color: var(--primary);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+}
+
+.paper-preview-content h2 {
+    font-size: 1.4rem;
+    margin: 1.5rem 0 1rem;
+    color: var(--primary);
+}
+
+.paper-preview-content h3 {
+    font-size: 1.2rem;
+    margin: 1.2rem 0 0.8rem;
+    color: var(--primary);
+}
+
+.paper-preview-content h4 {
+    font-size: 1.1rem;
+    margin: 1rem 0 0.6rem;
+    color: var(--primary);
+}
+
+/* Paragraphs */
+.paper-preview-content p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+/* Lists */
+.paper-preview-content ul, 
+.paper-preview-content ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+}
+
+.paper-preview-content li {
+    margin-bottom: 0.5rem;
+}
+
+/* Blockquotes */
+.paper-preview-content blockquote {
+    border-left: 3px solid var(--secondary);
+    padding-left: 1rem;
+    margin: 1rem 0;
+    color: var(--light-text);
+    font-style: italic;
+}
+
+/* Code blocks */
+.paper-preview-content pre {
+    background-color: #f0f0f0;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+}
+
+.paper-preview-content code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+    background-color: #f0f0f0;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+}
+
+.paper-preview-content pre code {
+    padding: 0;
+    background-color: transparent;
+}
+
+/* Links */
+.paper-preview-content a {
+    color: var(--secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.paper-preview-content a:hover {
+    color: var(--primary);
+    text-decoration: underline;
+}
+
+/* Loading indicator */
+.loading-indicator {
+    text-align: center;
+    padding: 2rem;
+    color: var(--light-text);
+    font-style: italic;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
+
+.loading-indicator {
+    animation: pulse 1.5s infinite;
+}
+
+/* Paper meta section styling */
+.paper-meta-large {
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.paper-meta-large .field,
+.paper-meta-large .type {
+    background-color: rgba(26, 54, 93, 0.1);
+    color: var(--primary);
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.quality-score.large {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.quality-score.large .score {
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 1.1rem;
+}
+
+.quality-score.large .score-bar {
+    width: 100px;
+    height: 8px;
+    background-color: rgba(26, 54, 93, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.quality-score.large .score-fill {
+    height: 100%;
+    background-color: var(--secondary);
+    border-radius: 4px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 767px) {
+    .paper-preview-content {
+        padding: 1rem;
+        font-size: 0.85rem;
+    }
+    
+    .paper-preview-content h1 {
+        font-size: 1.4rem;
+    }
+    
+    .paper-preview-content h2 {
+        font-size: 1.2rem;
+    }
+    
+    .paper-preview-content h3 {
+        font-size: 1.1rem;
+    }
+    
+    .quality-score.large {
+        margin-left: 0;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    
+    .quality-score.large .score-bar {
+        flex-grow: 1;
+    }
+}
