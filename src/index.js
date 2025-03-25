@@ -14,7 +14,9 @@ import { initPaperWizardAnimation } from './components/animations/paperWizardAni
 import { initExamples } from './components/examples/examples.js';
 import { initExampleModal } from './components/examples/exampleModal.js';
 import { initCookieNotice } from './components/cookie/cookieNotice.js';
-import { initPaperFormHandler } from './components/forms/paperFormHandler.js';
+// Import Stripe related modules
+import { initStripePayment } from './components/payment/stripePayment.js';
+import { initPaperFormStripeHandler } from './components/forms/paperFormStripeHandler.js';
 
 // Initialize the application when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
@@ -35,8 +37,11 @@ document.addEventListener('DOMContentLoaded', function() {
     initExampleModal(); // Initialize the modal first
     initExamples();     // Then initialize the examples
     
-    // Initialize the paper form handler (new)
-    initPaperFormHandler();
+    // Initialize Stripe payment functionality
+    initStripePayment();
+    
+    // Initialize the paper form handler with Stripe integration
+    initPaperFormStripeHandler();
     
     // Apply animations
     fadeInElements();
