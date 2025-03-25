@@ -14,6 +14,7 @@ import { initPaperWizardAnimation } from './components/animations/paperWizardAni
 import { initExamples } from './components/examples/examples.js';
 import { initExampleModal } from './components/examples/exampleModal.js';
 import { initCookieNotice } from './components/cookie/cookieNotice.js';
+import { initPaperFormHandler } from './components/forms/paperFormHandler.js';
 
 // Initialize the application when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
@@ -33,6 +34,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize our new examples components
     initExampleModal(); // Initialize the modal first
     initExamples();     // Then initialize the examples
+    
+    // Initialize the paper form handler (new)
+    initPaperFormHandler();
     
     // Apply animations
     fadeInElements();

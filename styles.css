@@ -4140,3 +4140,43 @@ input[type="email"] {
         height: 400px;
     }
 }
+/* Add these styles to your CSS file */
+
+/* Hide "Create Paper" button in header on mobile */
+@media (max-width: 768px) {
+    .header-cta {
+        display: none;
+    }
+}
+
+/* Improve form field error visualization */
+.error-field {
+    border: 2px solid #ff3b30 !important;
+    box-shadow: 0 0 4px rgba(255, 59, 48, 0.5) !important;
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* Style for disabled buttons while processing */
+.cta-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Highlight field animation */
+.highlight-field {
+    transition: background-color 0.3s ease;
+    background-color: rgba(255, 209, 102, 0.3) !important;
+    animation: pulse-highlight 1.5s ease;
+}
+
+@keyframes pulse-highlight {
+    0% { background-color: rgba(255, 209, 102, 0.5); }
+    50% { background-color: rgba(255, 209, 102, 0.2); }
+    100% { background-color: rgba(255, 209, 102, 0.5); }
+}

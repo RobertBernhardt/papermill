@@ -46,11 +46,17 @@ export function getPaperFormTemplate() {
                     <option value="sociology">Sociology</option>
                     <option value="sciences">Natural Sciences</option>
                     <option value="arts">Arts & Humanities</option>
+                    <option value="business">Business</option>
                     <option value="engineering">Engineering</option>
                     <option value="medicine">Medicine</option>
                     <option value="law">Law</option>
                     <option value="other">Other</option>
                 </select>
+            </div>
+
+            <div id="other-discipline-group" class="form-group" style="display: none;">
+                <label for="other-discipline">Please Specify Discipline</label>
+                <input type="text" id="other-discipline" name="other-discipline" placeholder="Please specify your discipline">
             </div>
             
             <div class="form-group">
