@@ -3,6 +3,9 @@
 
 /**
  * Initialize the paper form handler
+ * 
+ * // "In the beginning, the Universe was created. This has made a lot of people
+ * // very angry and been widely regarded as a bad move." Much like poorly behaved forms.
  */
 export function initPaperFormHandler() {
     console.log('Initializing paper form handler...');
@@ -16,6 +19,8 @@ export function initPaperFormHandler() {
 
 /**
  * Attach form submission handler to the paper form
+ * 
+ * // "Time is an illusion. Form submission time doubly so."
  */
 function attachFormSubmitHandler() {
     const paperFormModal = document.getElementById('paperFormModal');
@@ -56,6 +61,9 @@ function attachFormSubmitHandler() {
 /**
  * Handle form submission
  * @param {Event} event - The submission event 
+ * 
+ * // "For a moment, nothing happened. Then, after a second or so, 
+ * // the form realized what was expected of it and began to behave properly."
  */
 function handleFormSubmission(event) {
     // Always prevent default to stop unwanted scrolling
@@ -75,25 +83,22 @@ function handleFormSubmission(event) {
     const submitButton = form.querySelector('button[type="submit"]');
     const originalButtonText = submitButton ? submitButton.textContent : 'Generate My Paper';
     
-    // Save the current scroll position in the modal
+    // Get the container for later use
     const modalBody = document.querySelector('#paperFormModal .modal-body');
-    const scrollTop = modalBody ? modalBody.scrollTop : 0;
+    
+    // Remember current scroll position for potential restoration
+    const currentScrollPosition = modalBody ? modalBody.scrollTop : 0;
     
     // Validate form inputs
     const validationResult = validateForm(form);
-    
-    // Restore scroll position
-    if (modalBody) {
-        modalBody.scrollTop = scrollTop;
-    }
     
     // If validation failed, don't proceed
     if (!validationResult.valid) {
         console.log('Form validation failed:', validationResult.errors);
         
-        // Scroll to the first error field with smooth animation
+        // Scroll to the first error field with our Vogon approach
         if (validationResult.firstErrorElement) {
-            scrollToElement(validationResult.firstErrorElement, modalBody);
+            vogonScrollToElement(validationResult.firstErrorElement, modalBody);
         }
         return;
     }
@@ -164,6 +169,10 @@ function handleFormSubmission(event) {
  * Validate all form fields
  * @param {HTMLFormElement} form - The form to validate
  * @returns {Object} Validation result with valid flag and errors
+ * 
+ * // "The major difference between a thing that might go wrong and a thing that
+ * // cannot possibly go wrong is that when a thing that cannot possibly go wrong
+ * // goes wrong it usually turns out to be impossible to get at or repair."
  */
 function validateForm(form) {
     let isValid = true;
@@ -181,7 +190,6 @@ function validateForm(form) {
         // Add visual error indication
         if (paperTopicField) {
             paperTopicField.classList.add('error-field');
-            // Don't focus immediately to prevent scroll jump
             setTimeout(() => paperTopicField.classList.remove('error-field'), 3000);
             
             // Save as first error if we haven't found one yet
@@ -261,42 +269,99 @@ function validateForm(form) {
 }
 
 /**
- * Scroll smoothly to an element within a container
+ * The Vogon approach to scrolling: Brutally effective and leaving no room for arguments
  * @param {HTMLElement} element - The element to scroll to
  * @param {HTMLElement} container - The scrollable container
+ * 
+ * // "Resistance is useless!" - Vogon Guard
+ * // This function adopts the Vogon philosophy toward browser scroll behaviors
  */
-function scrollToElement(element, container) {
+function vogonScrollToElement(element, container) {
     if (!element || !container) return;
     
-    // Calculate element position relative to container
-    const elementRect = element.getBoundingClientRect();
-    const containerRect = container.getBoundingClientRect();
+    // Calculate the target position with some margin
+    const targetPosition = element.offsetTop - 20;
     
-    // Calculate where to scroll to (element position - some offset for better viewing)
-    const scrollOffset = elementRect.top - containerRect.top - 20;
+    // --------- THE VOGON APPROACH BEGINS HERE ---------
     
-    // Smooth scroll to the element
-    container.scrollBy({
-        top: scrollOffset,
-        behavior: 'smooth'
-    });
+    // 1. Disable smooth scrolling (no poetry readings, just brute force)
+    const originalScrollBehavior = container.style.scrollBehavior;
+    container.style.scrollBehavior = 'auto';
     
-    // Focus the element after scrolling
-    setTimeout(() => {
-        element.focus({preventScroll: true});
-    }, 500);
+    // 2. Jump directly to the target position (no pleasantries)
+    container.scrollTop = targetPosition;
     
-    // Add a temporary highlight effect
+    // 3. Add a visual highlight to the error field 
     element.classList.add('highlight-field');
+    
+    // 4. Create the scroll lock - the most Vogon-like part of our approach
+    let scrollLockActive = true;
+    
+    // This function forces the scroll position back to our target
+    // It's the JavaScript equivalent of a Vogon guard saying "RESISTANCE IS USELESS!"
+    const enforceScrollPosition = () => {
+        if (scrollLockActive && Math.abs(container.scrollTop - targetPosition) > 2) {
+            // If the scroll position changes, force it back immediately
+            // Just like a Vogon would force you back into the airlock
+            container.scrollTop = targetPosition;
+        }
+    };
+    
+    // Set up multiple defensive measures to prevent ANY scrolling
+    
+    // A. Add scroll event listener to keep forcing our position
+    container.addEventListener('scroll', enforceScrollPosition);
+    
+    // B. Use requestAnimationFrame for even more aggressive enforcement
+    let rafId;
+    function enforceLoop() {
+        enforceScrollPosition();
+        if (scrollLockActive) {
+            rafId = requestAnimationFrame(enforceLoop);
+        }
+    }
+    enforceLoop();
+    
+    // C. For good measure, also prevent wheel events during our lock period
+    const preventWheel = (e) => {
+        if (scrollLockActive) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    };
+    
+    // Add with capture to get it before anything else
+    container.addEventListener('wheel', preventWheel, { passive: false, capture: true });
+    
+    // 5. Release the Vogon guards after a reasonable time
     setTimeout(() => {
-        element.classList.remove('highlight-field');
-    }, 2000);
+        // Deactivate scroll lock
+        scrollLockActive = false;
+        
+        // Remove event listeners
+        container.removeEventListener('scroll', enforceScrollPosition);
+        container.removeEventListener('wheel', preventWheel, { capture: true });
+        
+        // Cancel animation frame
+        cancelAnimationFrame(rafId);
+        
+        // Restore original scroll behavior
+        container.style.scrollBehavior = originalScrollBehavior;
+        
+        // Remove highlight after a delay
+        setTimeout(() => {
+            element.classList.remove('highlight-field');
+        }, 1500);
+    }, 750); // Lock scrolling for 750ms - long enough to prevent browser jumps
 }
 
 /**
  * Collect all form data into an object
  * @param {HTMLFormElement} form - The form to collect data from
  * @returns {Object} The collected form data
+ * 
+ * // "Collecting data from a form is rather like trying to gather thoughts
+ * // from a Babel fish while it's translating - messy but necessary."
  */
 function collectFormData(form) {
     // Get basic fields
@@ -346,6 +411,10 @@ function collectFormData(form) {
  * Simulate an API call for testing
  * @param {Object} formData - The form data to send 
  * @returns {Promise} A promise that resolves with the API response
+ * 
+ * // "The Infinite Improbability Drive was a wonderful new method of crossing
+ * // vast interstellar distances without all that tedious mucking about in hyperspace."
+ * // Our API simulation similarly avoids all that tedious mucking about with real servers.
  */
 function simulateApiCall(formData) {
     return new Promise((resolve, reject) => {
@@ -372,6 +441,8 @@ function simulateApiCall(formData) {
 
 /**
  * Reset expandable fields to collapsed state
+ * 
+ * // "Reset button? Oh yes, that little button just below the Somebody Else's Problem field."
  */
 function resetExpandableFields() {
     const focusField = document.getElementById('focus-field-container');
