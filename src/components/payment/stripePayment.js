@@ -313,33 +313,32 @@ async function handlePaymentSubmission(event) {
  * @returns {Promise<Object>} The payment intent response
  */
 async function createPaymentIntent(formData) {
-    // In a real application, this would call your server endpoint
-    // For demo purposes, we'll simulate a server response
-    
     try {
-        // This would normally be a fetch call to your server
-        // const response = await fetch('/api/create-payment-intent', {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify(formData)
-        // });
-        // return await response.json();
-        
-        // Simulated server response for demo
-        return new Promise(resolve => {
-            setTimeout(() => {
-                resolve({
-                    clientSecret: 'pi_3O3LqELksMQeoDtF1FBF2345_secret_vjkQACsdfkj34kjdfSFDFSDF',
-                    amount: formData.totalPrice * 100, // amount in cents
-                    currency: 'usd'
-                });
-            }, 700);
-        });
+      const response = await fetch('/api/create-payment-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: formData.totalPrice, // in dollars
+          currency: 'usd',
+          metadata: {
+            paperTopic: formData.paperTopic,
+            academicDiscipline: formData.academicDiscipline,
+            paperType: formData.paperType,
+            email: formData.email
+          }
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      
+      return await response.json();
     } catch (error) {
-        console.error('Error creating payment intent:', error);
-        throw new Error('Could not process payment. Please try again.');
+      console.error('Error creating payment intent:', error);
+      throw new Error('Could not process payment. Please try again.');
     }
-}
+  }
 
 /**
  * Notify the server that payment is complete
