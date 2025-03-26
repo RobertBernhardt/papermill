@@ -14,7 +14,8 @@ import { initPaperWizardAnimation } from './components/animations/paperWizardAni
 import { initExamples } from './components/examples/examples.js';
 import { initExampleModal } from './components/examples/exampleModal.js';
 import { initCookieNotice } from './components/cookie/cookieNotice.js';
-// Import Stripe related modules
+
+// Import Stripe related modules only
 import { initStripePayment } from './components/payment/stripePayment.js';
 import { initPaperFormStripeHandler } from './components/forms/paperFormStripeHandler.js';
 
@@ -29,18 +30,18 @@ document.addEventListener('DOMContentLoaded', function() {
     initEnhancedForm(); // Initialize the enhanced form before the modal
     initModal();
     initTestimonials();
-    initAdditionalModals(); // This now includes legal content initialization
+    initAdditionalModals(); // This includes legal content initialization
     initPaperWizardAnimation();
     initCookieNotice();
     
-    // Initialize our new examples components
+    // Initialize our examples components
     initExampleModal(); // Initialize the modal first
     initExamples();     // Then initialize the examples
     
     // Initialize Stripe payment functionality
     initStripePayment();
     
-    // Initialize the paper form handler with Stripe integration
+    // Initialize ONLY the Stripe form handler
     initPaperFormStripeHandler();
     
     // Apply animations
