@@ -117,17 +117,66 @@ function handleFormSubmission(event) {
         submitButton.disabled = true;
     }
     
-    // Instead of simulating an API call, show the Stripe payment form
-    // Add a short delay to make the transition feel natural
-    setTimeout(() => {
-        togglePaymentForm(true, formData);
+    // Prepare request data for the payment intent
+    const requestData = {
+        amount: formData.totalPrice,
+        currency: 'usd',
+        metadata: {
+            paperTopic: formData.paperTopic,
+            academicDiscipline: formData.academicDiscipline,
+            paperType: formData.paperType,
+            creativityLevel: formData.creativityLevel,
+            qualityControl: formData.qualityControl,
+            email: formData.email
+        }
+    };
+    
+    console.log('Sending payment intent request:', requestData);
+    
+    // Make the API call with better error handling
+    fetch('/api/create-payment-intent.js', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            // Try to get more detail from the error response
+            return response.json().then(errData => {
+                throw new Error(errData.error || `HTTP error! status: ${response.status}`);
+            }).catch(jsonErr => {
+                // If we couldn't parse JSON, just use the status
+                throw new Error(`HTTP error! status: ${response.status}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Payment intent created successfully:', data);
         
-        // Reset the button after switching to payment form
+        // Reset the button after success
         if (submitButton) {
             submitButton.textContent = originalButtonText;
             submitButton.disabled = false;
         }
-    }, 500);
+        
+        // Show the Stripe payment form
+        togglePaymentForm(true, formData);
+    })
+    .catch(error => {
+        console.error('Error creating payment intent:', error);
+        
+        // Show error message
+        alert(`Payment error: ${error.message || 'Unknown error'}. Please check the console for more details.`);
+        
+        // Reset button
+        if (submitButton) {
+            submitButton.textContent = originalButtonText;
+            submitButton.disabled = false;
+        }
+    });
 }
 
 /**

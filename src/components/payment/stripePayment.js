@@ -1,19 +1,21 @@
 // Stripe Payment Module
 // Handles Stripe payment processing and integration
 
-// Initialize with your publishable key
+// Initialize variables
 let stripe;
 let elements;
 let cardElement;
 let paymentFormVisible = false;
+let clientSecret = null;
 
 /**
  * Initialize the Stripe payment functionality
  */
 export function initStripePayment() {
     // Initialize Stripe with your publishable key
-    // Replace with your actual publishable key from Stripe dashboard
-    stripe = Stripe('pk_test_51R6Y5kI2zLbwp9qJpwp7wocGiAGXSwLpPiCgSBUstMpLEcceQsev048HUZs7rZwJT7VOXnTDmMYeiHDoC361GvGo00oJ0kGCWz');
+    // Replace with your actual publishable key from Stripe dashboard or environment variable
+    const stripePublicKey = 'pk_test_51R6Y5kI2zLbwp9qJpwp7wocGiAGXSwLpPiCgSBUstMpLEcceQsev048HUZs7rZwJT7VOXnTDmMYeiHDoC361GvGo00oJ0kGCWz';
+    stripe = Stripe(stripePublicKey);
     
     // Create and inject payment form HTML
     createPaymentForm();
@@ -158,7 +160,14 @@ export function togglePaymentForm(showPayment, formData = null) {
     
     if (showPayment) {
         // Store form data for later use
-        paymentContainer.dataset.formData = JSON.stringify(formData);
+        if (formData) {
+            paymentContainer.dataset.formData = JSON.stringify(formData);
+            
+            // Store client secret from payment intent response
+            if (formData.clientSecret) {
+                clientSecret = formData.clientSecret;
+            }
+        }
         
         // Update payment amount display
         const paymentAmount = document.getElementById('payment-amount');
@@ -223,16 +232,19 @@ async function handlePaymentSubmission(event) {
             throw new Error('Form data not found');
         }
         
-        // Create payment intent on your server
-        const paymentIntentResponse = await createPaymentIntent(formData);
+        // If we don't have a client secret in memory, get it from formData
+        if (!clientSecret && formData.clientSecret) {
+            clientSecret = formData.clientSecret;
+        }
         
-        if (!paymentIntentResponse.clientSecret) {
-            throw new Error('Could not retrieve payment intent');
+        // Validate we have a client secret
+        if (!clientSecret) {
+            throw new Error('Missing payment information. Please try again.');
         }
         
         // Confirm card payment
         const { error, paymentIntent } = await stripe.confirmCardPayment(
-            paymentIntentResponse.clientSecret, {
+            clientSecret, {
                 payment_method: {
                     card: cardElement,
                     billing_details: {
@@ -251,7 +263,7 @@ async function handlePaymentSubmission(event) {
             submitButton.disabled = false;
             spinner.classList.add('hidden');
             buttonText.textContent = 'Pay Now';
-        } else {
+        } else if (paymentIntent.status === 'succeeded') {
             // Payment succeeded
             buttonText.textContent = 'Payment Successful!';
             
@@ -288,10 +300,17 @@ async function handlePaymentSubmission(event) {
                     const paperForm = document.querySelector('.paper-form');
                     if (paperForm) paperForm.reset();
                     
-                    // Show success message or redirect to success page
-                    showSuccessMessage();
+                    // Show success message
+                    showSuccessMessage(formData);
+                    
+                    // Clear client secret after successful payment
+                    clientSecret = null;
                 }, 300);
             }, 1500);
+        } else {
+            // Payment requires additional action
+            buttonText.textContent = 'Additional verification required...';
+            console.log('Payment requires additional action:', paymentIntent.status);
         }
     } catch (error) {
         console.error('Payment error:', error);
@@ -308,49 +327,20 @@ async function handlePaymentSubmission(event) {
 }
 
 /**
- * Create a payment intent on the server
- * @param {Object} formData - The form data with pricing information
- * @returns {Promise<Object>} The payment intent response
- */
-async function createPaymentIntent(formData) {
-    try {
-      const response = await fetch('/api/create-payment-intent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: formData.totalPrice, // in dollars
-          currency: 'usd',
-          metadata: {
-            paperTopic: formData.paperTopic,
-            academicDiscipline: formData.academicDiscipline,
-            paperType: formData.paperType,
-            email: formData.email
-          }
-        })
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      
-      return await response.json();
-    } catch (error) {
-      console.error('Error creating payment intent:', error);
-      throw new Error('Could not process payment. Please try again.');
-    }
-  }
-
-/**
  * Notify the server that payment is complete
  * @param {string} paymentIntentId - The payment intent ID
  * @param {Object} formData - The original form data
  */
 async function notifyServerPaymentComplete(paymentIntentId, formData) {
-    // In a real application, this would call your server endpoint
-    // For demo purposes, we'll simulate a server response
-    
     try {
-        // This would normally be a fetch call to your server
+        // In a real implementation, this would call an API endpoint
+        // For now, we'll just log to the console
+        console.log('Payment complete notification would be sent to server', {
+            paymentIntentId,
+            formData
+        });
+        
+        // In a real implementation:
         // const response = await fetch('/api/payment-complete', {
         //     method: 'POST',
         //     headers: { 'Content-Type': 'application/json' },
@@ -358,40 +348,54 @@ async function notifyServerPaymentComplete(paymentIntentId, formData) {
         // });
         // return await response.json();
         
-        // Simulated server response for demo
-        return new Promise(resolve => {
-            setTimeout(() => {
-                console.log('Payment complete notification sent to server', {
-                    paymentIntentId,
-                    formData
-                });
-                resolve({ success: true });
-            }, 500);
-        });
+        return { success: true };
     } catch (error) {
         console.error('Error notifying server about payment:', error);
         // We still consider payment successful even if this fails
         // The payment succeeded, but our server notification failed
+        return { success: false, error: error.message };
     }
 }
 
 /**
  * Show a success message after payment
+ * @param {Object} formData - The form data with payment details
  */
-function showSuccessMessage() {
+function showSuccessMessage(formData) {
     // Create success message element
     const successMessage = document.createElement('div');
     successMessage.className = 'payment-success-message';
+    successMessage.style.position = 'fixed';
+    successMessage.style.top = '0';
+    successMessage.style.left = '0';
+    successMessage.style.right = '0';
+    successMessage.style.bottom = '0';
+    successMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    successMessage.style.display = 'flex';
+    successMessage.style.justifyContent = 'center';
+    successMessage.style.alignItems = 'center';
+    successMessage.style.zIndex = '9999';
+    successMessage.style.opacity = '0';
+    successMessage.style.transition = 'opacity 0.3s ease';
+    
+    // Format paper topic for display
+    const paperTopic = formData.paperTopic || 'your requested topic';
+    const email = formData.email || 'your email';
+    
+    // Create success message content
     successMessage.innerHTML = `
-        <div class="success-content">
-            <div class="success-icon">
-                <svg viewBox="0 0 24 24" width="48" height="48">
+        <div style="background-color: white; padding: 30px; border-radius: 8px; max-width: 500px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+            <div style="margin-bottom: 20px; color: #4CAF50;">
+                <svg viewBox="0 0 24 24" width="60" height="60">
                     <path fill="#4CAF50" d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M10,17l-5-5l1.41-1.41L10,14.17l7.59-7.59L19,8L10,17z"/>
                 </svg>
             </div>
-            <h3>Payment Successful!</h3>
-            <p>Your paper is being generated. We'll send it to your email when it's ready.</p>
-            <button class="cta-button primary" id="success-close">Done</button>
+            <h2 style="color: #333; margin-bottom: 15px;">Payment Successful!</h2>
+            <p style="color: #666; margin-bottom: 20px;">
+                Your paper on <strong>"${paperTopic}"</strong> is being generated.<br>
+                We'll send it to <strong>${email}</strong> when it's ready.
+            </p>
+            <button id="success-close-btn" style="background-color: #FFD166; color: #333; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">Close</button>
         </div>
     `;
     
@@ -400,14 +404,14 @@ function showSuccessMessage() {
     
     // Add animation
     setTimeout(() => {
-        successMessage.classList.add('visible');
+        successMessage.style.opacity = '1';
     }, 10);
     
     // Add close button handler
-    const closeButton = successMessage.querySelector('#success-close');
+    const closeButton = successMessage.querySelector('#success-close-btn');
     if (closeButton) {
         closeButton.addEventListener('click', () => {
-            successMessage.classList.remove('visible');
+            successMessage.style.opacity = '0';
             setTimeout(() => {
                 document.body.removeChild(successMessage);
             }, 300);
