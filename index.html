@@ -114,6 +114,100 @@
             <div class="section-intro">
                 <h2>Ridiculously Simple Process</h2>
                 <p>Because spending 67 hours in the library is so last century</p>
+                <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
+                    <button id="test-stripe-connection" style="background-color: #FFD166; color: #333; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                      Test Stripe Connection
+                    </button>
+                    <div id="stripe-test-result" style="background: white; padding: 10px; margin-top: 10px; border-radius: 4px; display: none; max-width: 300px; word-break: break-word; box-shadow: 0 2px 10px rgba(0,0,0,0.1);"></div>
+                  </div>
+                  
+                  <script>
+                  document.addEventListener('DOMContentLoaded', function() {
+                    const testButton = document.getElementById('test-stripe-connection');
+                    const resultDisplay = document.getElementById('stripe-test-result');
+                    
+                    testButton.addEventListener('click', function() {
+                      // Show loading state
+                      testButton.textContent = 'Testing...';
+                      testButton.disabled = true;
+                      resultDisplay.style.display = 'none';
+                      
+                      // Simple test data
+                      const testData = {
+                        amount: 5, // $5.00 minimum amount
+                        currency: 'usd',
+                        metadata: {
+                          test: 'stripe_connection_test',
+                          timestamp: new Date().toISOString()
+                        }
+                      };
+                      
+                      console.log('Sending test request to payment intent API:', testData);
+                      
+                      // Make the API call
+                      fetch('/api/create-payment-intent.js', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(testData)
+                      })
+                      .then(response => {
+                        // Get status and clone response for both body inspection and JSON parsing
+                        const status = response.status;
+                        const clone = response.clone();
+                        
+                        // Log full response for debugging
+                        clone.text().then(text => {
+                          console.log(`Full response (status ${status}):`, text);
+                        });
+                        
+                        // Continue with JSON parsing
+                        return response.json();
+                      })
+                      .then(data => {
+                        console.log('Payment intent response:', data);
+                        
+                        // Display result
+                        resultDisplay.style.display = 'block';
+                        if (data.clientSecret) {
+                          resultDisplay.innerHTML = `
+                            <div style="color: green; margin-bottom: 5px;">✅ Success!</div>
+                            <div>Client Secret received (starts with: ${data.clientSecret.substring(0, 10)}...)</div>
+                            <div style="font-size: 12px; margin-top: 5px;">Check console for full details</div>
+                          `;
+                        } else if (data.error) {
+                          resultDisplay.innerHTML = `
+                            <div style="color: red; margin-bottom: 5px;">❌ Error</div>
+                            <div>${data.error}</div>
+                            <div style="font-size: 12px; margin-top: 5px;">${data.details || ''}</div>
+                          `;
+                        } else {
+                          resultDisplay.innerHTML = `
+                            <div style="color: orange; margin-bottom: 5px;">⚠️ Unexpected Response</div>
+                            <div>No client secret or error message found.</div>
+                            <div style="font-size: 12px; margin-top: 5px;">Check console for details</div>
+                          `;
+                        }
+                      })
+                      .catch(error => {
+                        console.error('Error testing payment intent:', error);
+                        
+                        resultDisplay.style.display = 'block';
+                        resultDisplay.innerHTML = `
+                          <div style="color: red; margin-bottom: 5px;">❌ Connection Error</div>
+                          <div>${error.message || 'Failed to connect to payment API'}</div>
+                          <div style="font-size: 12px; margin-top: 5px;">Check console for details</div>
+                        `;
+                      })
+                      .finally(() => {
+                        // Reset button
+                        testButton.textContent = 'Test Stripe Connection';
+                        testButton.disabled = false;
+                      });
+                    });
+                  });
+                  </script>
             </div>
             <div class="process-steps">
                 <div class="step">
