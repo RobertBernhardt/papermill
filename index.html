@@ -115,102 +115,212 @@
                 <h2>Ridiculously Simple Process</h2>
                 <p>Because spending 67 hours in the library is so last century</p>
                 <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
-                    <button id="test-stripe-connection" style="background-color: #FFD166; color: #333; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                      Test Stripe Connection
+                    <button id="open-test-form" style="background-color: #FFD166; color: #333; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                      Open Test Payment Form
                     </button>
-                    <div id="stripe-test-result" style="background: white; padding: 10px; margin-top: 10px; border-radius: 4px; display: none; max-width: 300px; word-break: break-word; box-shadow: 0 2px 10px rgba(0,0,0,0.1);"></div>
+                    
+                    <div id="test-form-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 10000; overflow-y: auto;">
+                      <div style="background: white; max-width: 500px; margin: 50px auto; padding: 25px; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                          <h3 style="margin: 0;">Test Payment Form</h3>
+                          <button id="close-test-form" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+                        </div>
+                        
+                        <div id="test-form-content">
+                          <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Amount (USD)</label>
+                            <input type="number" id="test-amount" value="5" min="1" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                          </div>
+                          
+                          <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Email</label>
+                            <input type="email" id="test-email" value="test@example.com" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                          </div>
+                          
+                          <button id="submit-test-payment" style="background-color: #FFD166; color: #333; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%;">
+                            Create Payment Intent
+                          </button>
+                          
+                          <div id="payment-element-container" style="margin-top: 20px; display: none;">
+                            <div id="payment-element" style="margin-bottom: 20px;"></div>
+                            <button id="confirm-payment" style="background-color: #06D6A0; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%;">
+                              Pay Now
+                            </button>
+                            <div id="payment-message" style="margin-top: 10px; color: #e63946; display: none;"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   
                   <script>
                   document.addEventListener('DOMContentLoaded', function() {
-                    const testButton = document.getElementById('test-stripe-connection');
-                    const resultDisplay = document.getElementById('stripe-test-result');
+                    // Get elements
+                    const openFormButton = document.getElementById('open-test-form');
+                    const closeFormButton = document.getElementById('close-test-form');
+                    const formModal = document.getElementById('test-form-modal');
+                    const submitPaymentButton = document.getElementById('submit-test-payment');
+                    const confirmPaymentButton = document.getElementById('confirm-payment');
+                    const paymentMessage = document.getElementById('payment-message');
+                    const paymentElementContainer = document.getElementById('payment-element-container');
                     
-                    testButton.addEventListener('click', function() {
-                      // Show loading state
-                      testButton.textContent = 'Testing...';
-                      testButton.disabled = true;
-                      resultDisplay.style.display = 'none';
+                    // Stripe elements
+                    let stripe;
+                    let elements;
+                    let clientSecret;
+                    
+                    // Initialize Stripe
+                    if (window.Stripe) {
+                      // Use the same publishable key that your regular form uses
+                      // This is a test publishable key - replace with your actual key
+                      stripe = Stripe('pk_test_51R6Y5kI2zLbwp9qJpwp7wocGiAGXSwLpPiCgSBUstMpLEcceQsev048HUZs7rZwJT7VOXnTDmMYeiHDoC361GvGo00oJ0kGCWz');
+                    } else {
+                      console.error('Stripe.js not loaded');
+                    }
+                    
+                    // Open modal
+                    openFormButton.addEventListener('click', function() {
+                      formModal.style.display = 'block';
+                      document.body.style.overflow = 'hidden';
+                    });
+                    
+                    // Close modal
+                    closeFormButton.addEventListener('click', function() {
+                      formModal.style.display = 'none';
+                      document.body.style.overflow = '';
+                    });
+                    
+                    // Create payment intent
+                    submitPaymentButton.addEventListener('click', async function() {
+                      const amountInput = document.getElementById('test-amount');
+                      const emailInput = document.getElementById('test-email');
                       
-                      // Create a unique test ID to easily find this in Stripe
-                      const testId = 'test_' + Math.random().toString(36).substring(2, 10) + '_' + Date.now();
+                      const amount = parseFloat(amountInput.value);
+                      const email = emailInput.value.trim();
                       
-                      // Simple test data
-                      const testData = {
-                        amount: 5, // $5.00 minimum amount
-                        currency: 'usd',
-                        metadata: {
-                          test_id: testId,
-                          test_type: 'stripe_connection_test',
-                          timestamp: new Date().toISOString()
-                        }
-                      };
+                      if (!amount || amount <= 0) {
+                        alert('Please enter a valid amount');
+                        return;
+                      }
                       
-                      console.log('Sending test request to payment intent API:', testData);
-                      console.log('Look for test_id in Stripe Dashboard:', testId);
+                      if (!email || !email.includes('@')) {
+                        alert('Please enter a valid email');
+                        return;
+                      }
                       
-                      // Make the API call
-                      fetch('/api/create-payment-intent.js', {
-                        method: 'POST',
-                        headers: {
-                          'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(testData)
-                      })
-                      .then(response => {
-                        // Get status and clone response for both body inspection and JSON parsing
-                        const status = response.status;
-                        const clone = response.clone();
-                        
-                        // Log full response for debugging
-                        clone.text().then(text => {
-                          console.log(`Full response (status ${status}):`, text);
+                      submitPaymentButton.disabled = true;
+                      submitPaymentButton.textContent = 'Processing...';
+                      
+                      try {
+                        const response = await fetch('/api/create-payment-intent.js', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            amount: amount,
+                            currency: 'usd',
+                            metadata: {
+                              email: email,
+                              test_form: 'true'
+                            }
+                          })
                         });
                         
-                        // Continue with JSON parsing
-                        return response.json();
-                      })
-                      .then(data => {
+                        const data = await response.json();
                         console.log('Payment intent response:', data);
                         
-                        // Display result
-                        resultDisplay.style.display = 'block';
                         if (data.clientSecret) {
-                          resultDisplay.innerHTML = `
-                            <div style="color: green; margin-bottom: 5px;">✅ Success!</div>
-                            <div>Client Secret received (starts with: ${data.clientSecret.substring(0, 10)}...)</div>
-                            <div style="font-size: 12px; margin-top: 5px;">Test ID: ${testId}</div>
-                            <div style="font-size: 12px; margin-top: 5px;">Find this test in Stripe Dashboard using the Test ID in metadata</div>
-                          `;
+                          clientSecret = data.clientSecret;
+                          
+                          // Hide the create payment intent button
+                          submitPaymentButton.style.display = 'none';
+                          
+                          // Show the payment element
+                          paymentElementContainer.style.display = 'block';
+                          
+                          // Create payment element if not already created
+                          if (!elements) {
+                            elements = stripe.elements({
+                              clientSecret: clientSecret,
+                              appearance: {
+                                theme: 'stripe',
+                                variables: {
+                                  colorPrimary: '#FFD166',
+                                  colorBackground: '#ffffff',
+                                  colorText: '#30313d'
+                                }
+                              }
+                            });
+                            
+                            // Create and mount the Payment Element
+                            const paymentElement = elements.create('payment');
+                            paymentElement.mount('#payment-element');
+                          }
                         } else if (data.error) {
-                          resultDisplay.innerHTML = `
-                            <div style="color: red; margin-bottom: 5px;">❌ Error</div>
-                            <div>${data.error}</div>
-                            <div style="font-size: 12px; margin-top: 5px;">${data.details || ''}</div>
-                          `;
+                          throw new Error(data.error);
                         } else {
-                          resultDisplay.innerHTML = `
-                            <div style="color: orange; margin-bottom: 5px;">⚠️ Unexpected Response</div>
-                            <div>No client secret or error message found.</div>
-                            <div style="font-size: 12px; margin-top: 5px;">Check console for details</div>
-                          `;
+                          throw new Error('Something went wrong');
                         }
-                      })
-                      .catch(error => {
-                        console.error('Error testing payment intent:', error);
+                      } catch (error) {
+                        console.error('Error creating payment intent:', error);
+                        paymentMessage.textContent = error.message;
+                        paymentMessage.style.display = 'block';
+                      } finally {
+                        submitPaymentButton.disabled = false;
+                        submitPaymentButton.textContent = 'Create Payment Intent';
+                      }
+                    });
+                    
+                    // Handle form submission and payment confirmation
+                    confirmPaymentButton.addEventListener('click', async function(e) {
+                      e.preventDefault();
+                      
+                      if (!stripe || !elements || !clientSecret) {
+                        return;
+                      }
+                      
+                      // Show loading UI
+                      confirmPaymentButton.disabled = true;
+                      confirmPaymentButton.textContent = 'Processing...';
+                      
+                      try {
+                        const { error } = await stripe.confirmPayment({
+                          elements,
+                          confirmParams: {
+                            return_url: window.location.href + '?payment_success=true',
+                          },
+                          redirect: 'if_required'
+                        });
                         
-                        resultDisplay.style.display = 'block';
-                        resultDisplay.innerHTML = `
-                          <div style="color: red; margin-bottom: 5px;">❌ Connection Error</div>
-                          <div>${error.message || 'Failed to connect to payment API'}</div>
-                          <div style="font-size: 12px; margin-top: 5px;">Check console for details</div>
-                        `;
-                      })
-                      .finally(() => {
-                        // Reset button
-                        testButton.textContent = 'Test Stripe Connection';
-                        testButton.disabled = false;
-                      });
+                        if (error) {
+                          throw error;
+                        } else {
+                          paymentMessage.textContent = 'Payment succeeded!';
+                          paymentMessage.style.color = 'green';
+                          paymentMessage.style.display = 'block';
+                          
+                          // Reset form after success
+                          setTimeout(() => {
+                            paymentElementContainer.style.display = 'none';
+                            submitPaymentButton.style.display = 'block';
+                            paymentMessage.style.display = 'none';
+                            
+                            // Close modal after a delay
+                            setTimeout(() => {
+                              formModal.style.display = 'none';
+                              document.body.style.overflow = '';
+                            }, 1000);
+                          }, 2000);
+                        }
+                      } catch (error) {
+                        console.error('Payment confirmation error:', error);
+                        paymentMessage.textContent = error.message || 'An unexpected error occurred';
+                        paymentMessage.style.display = 'block';
+                      } finally {
+                        confirmPaymentButton.disabled = false;
+                        confirmPaymentButton.textContent = 'Pay Now';
+                      }
                     });
                   });
                   </script>
