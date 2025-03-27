@@ -132,17 +132,22 @@
                       testButton.disabled = true;
                       resultDisplay.style.display = 'none';
                       
+                      // Create a unique test ID to easily find this in Stripe
+                      const testId = 'test_' + Math.random().toString(36).substring(2, 10) + '_' + Date.now();
+                      
                       // Simple test data
                       const testData = {
                         amount: 5, // $5.00 minimum amount
                         currency: 'usd',
                         metadata: {
-                          test: 'stripe_connection_test',
+                          test_id: testId,
+                          test_type: 'stripe_connection_test',
                           timestamp: new Date().toISOString()
                         }
                       };
                       
                       console.log('Sending test request to payment intent API:', testData);
+                      console.log('Look for test_id in Stripe Dashboard:', testId);
                       
                       // Make the API call
                       fetch('/api/create-payment-intent.js', {
@@ -174,7 +179,8 @@
                           resultDisplay.innerHTML = `
                             <div style="color: green; margin-bottom: 5px;">✅ Success!</div>
                             <div>Client Secret received (starts with: ${data.clientSecret.substring(0, 10)}...)</div>
-                            <div style="font-size: 12px; margin-top: 5px;">Check console for full details</div>
+                            <div style="font-size: 12px; margin-top: 5px;">Test ID: ${testId}</div>
+                            <div style="font-size: 12px; margin-top: 5px;">Find this test in Stripe Dashboard using the Test ID in metadata</div>
                           `;
                         } else if (data.error) {
                           resultDisplay.innerHTML = `
